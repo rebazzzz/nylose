@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nylöse SportCenter - Kampsporter i Göteborg</title>
+    <meta name="description" content="Träna alla våra kampsporter för bara 600 kr per termin! Wresfit, Brottning, Girls Only. Välkommen till Nylöse SportCenter.">
+    <meta name="keywords" content="kampsport, brottning, wresfit, träning, göteborg, 600 kr per termin">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">Nylöse SportCenter</a>
+            <ul class="nav-links">
+                <li><a href="#hem">Hem</a></li>
+                <li><a href="#traningar">Träningar</a></li>
+                <li><a href="#schema">Schema</a></li>
+                <li><a href="#om-oss">Om oss</a></li>
+                <li><a href="#kontakt">Kontakt</a></li>
+            </ul>
+            <div class="profile-placeholder" onclick="handleLoginClick()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="#000000" stroke-width="2"/>
+                    <path d="M20 22C20 18.6863 16.4183 16 12 16C7.58172 16 4 18.6863 4 22" stroke="#000000" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hem">
+        <div class="container hero-content">
+            <h1>Träna alla våra kampsporter för bara 600 kr per termin!</h1>
+            <div class="price-badge">600 kr / termin</div>
+            <p>Välkommen till Nylöse SportCenter - en plats för alla oavsett ålder och erfarenhet. Hos oss får du kvalitetsträning till ett otroligt pris!</p>
+            <div>
+                <a href="#kontakt" class="btn btn-primary">Börja träna</a>
+                <a href="#schema" class="btn btn-secondary">Se schema</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sports Section -->
+    <section class="sports" id="traningar">
+        <div class="container">
+            <h2 class="section-title">Våra sporter</h2>
+            <div class="sports-grid">
+                <div class="sport-card">
+                    <div class="sport-image" style="background-color: #f0f0f0;">Wresfit</div>
+                    <div class="sport-content">
+                        <h3 class="sport-title">Wresfit</h3>
+                        <p>Funktionell styrketräning inspirerad av brottning. Perfekt för att bygga styrka, kondition och koordination.</p>
+                    </div>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-image" style="background-color: #e6f2ff;">Brottning</div>
+                    <div class="sport-content">
+                        <h3 class="sport-title">Brottning</h3>
+                        <p>Både Greco-Roman och Freestyle för barn och vuxna. Lär dig grunderna eller utveckla dina färdigheter.</p>
+                    </div>
+                </div>
+                <div class="sport-card">
+                    <div class="sport-image" style="background-color: #fff0f5;">Girls Only</div>
+                    <div class="sport-content">
+                        <h3 class="sport-title">Girls Only</h3>
+                        <p>En trygg och motiverande miljö för tjejer. Få självförtroende och styrka i en exklusiv kvinnlig grupp.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule Section -->
+    <section class="schedule" id="schema">
+        <div class="container">
+            <h2 class="section-title">Schema</h2>
+            <div class="schedule-container">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Dag</th>
+                            <th>Tid</th>
+                            <th>Aktivitet</th>
+                            <th>Nivå</th>
+                            <th>Boka</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schedule-body">
+                        <!-- Schedule data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="om-oss">
+        <div class="container">
+            <h2 class="section-title">Om oss</h2>
+            <div class="about-content">
+                <p>Nylöse SportCenter har varit en del av Göteborgs idrottsliv sedan 2010. Vår filosofi är att alla ska ha möjlighet att träna kampsport oavsett bakgrund eller ekonomiska förutsättningar.</p>
+                <p>Vi tror på gemenskap, respekt och utveckling. Våra tränare är certifierade och har lång erfarenhet av både träning och tävling.</p>
+                
+                <div class="coaches-grid">
+                    <div class="coach-card">
+                        <div class="coach-image">Tränare 1</div>
+                        <h3>Marcus Andersson</h3>
+                        <p>Huvudtränare med över 15 års erfarenhet av brottning.</p>
+                    </div>
+                    <div class="coach-card">
+                        <div class="coach-image">Tränare 2</div>
+                        <h3>Emma Johansson</h3>
+                        <p>Specialist på Girls Only-gruppen och självförsvar.</p>
+                    </div>
+                    <div class="coach-card">
+                        <div class="coach-image">Tränare 3</div>
+                        <h3>David Lindgren</h3>
+                        <p>Wresfit-expert och styrketränare.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="kontakt">
+        <div class="container">
+            <h2 class="section-title">Kontakt</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 21C15.5 17.4 19 14.1764 19 10.2C19 6.22355 15.7764 3 12 3C8.22355 3 5 6.22355 5 10.2C5 14.1764 8.5 17.4 12 21Z" stroke="white" stroke-width="2"/>
+                                <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="white" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>Adress</h3>
+                            <p>Nylösevägen 123, 417 56 Göteborg</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 4H9L11 9L8.5 10.5C9.57096 12.6715 11.3285 14.429 13.5 15.5L15 13L20 15V19C20 19.5304 19.7893 20.0391 19.4142 20.4142C19.0391 20.7893 18.5304 21 18 21C14.0993 20.763 10.4202 19.1065 7.65683 16.3432C4.8935 13.5798 3.23705 9.90074 3 6C3 5.46957 3.21071 4.96086 3.58579 4.58579C3.96086 4.21071 4.46957 4 5 4Z" stroke="white" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>Telefon</h3>
+                            <p>031-123 45 67</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="white" stroke-width="2"/>
+                                <path d="M22 6L12 13L2 6" stroke="white" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>E-post</h3>
+                            <p>info@nylosesportcenter.se</p>
+                        </div>
+                    </div>
+                    <div class="price-badge">Endast 600 kr / termin!</div>
+                    <div class="map-placeholder">
+                        Karta till Nylöse SportCenter
+                    </div>
+                </div>
+                <form class="contact-form" id="contact-form">
+                    <div class="form-group">
+                        <label for="name">Namn</label>
+                        <input type="text" id="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-post</label>
+                        <input type="email" id="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Meddelande</label>
+                        <textarea id="message" class="form-control" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Skicka meddelande</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Nylöse SportCenter</h3>
+                    <p>Din plats för kampsport i Göteborg. Alla är välkomna oavsett erfarenhet!</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">FB</a>
+                        <a href="#" class="social-link">IG</a>
+                        <a href="#" class="social-link">YT</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Öppettider</h3>
+                    <p>Mån-Fre: 08:00 - 22:00</p>
+                    <p>Lör: 09:00 - 18:00</p>
+                    <p>Sön: 10:00 - 16:00</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Kontakt</h3>
+                    <p>Nylösevägen 123</p>
+                    <p>417 56 Göteborg</p>
+                    <p>031-123 45 67</p>
+                    <p>info@nylosesportcenter.se</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Nylöse SportCenter. Alla rättigheter förbehållna.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts.js"> </script>
+</body>
+</html>
