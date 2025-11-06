@@ -34,8 +34,26 @@
         // Toggle mobile menu
         function toggleMenu() {
             const navLinks = document.querySelector('.nav-links');
-            navLinks.classList.toggle('active');
+            const hamburger = document.querySelector('.hamburger');
+            const overlay = document.querySelector('.menu-overlay');
+            const isActive = navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+            overlay.classList.toggle('active');
+            hamburger.setAttribute('aria-expanded', isActive);
         }
+
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const navLinks = document.querySelector('.nav-links');
+                const hamburger = document.querySelector('.hamburger');
+                const overlay = document.querySelector('.menu-overlay');
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('active');
+                overlay.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+            }
+        });
 
         // Mock function for booking
         function bookSession(day, time, activity) {
@@ -62,6 +80,9 @@
             document.querySelectorAll('.nav-links a').forEach(link => {
                 link.addEventListener('click', () => {
                     document.querySelector('.nav-links').classList.remove('active');
+                    document.querySelector('.hamburger').classList.remove('active');
+                    document.querySelector('.menu-overlay').classList.remove('active');
+                    document.querySelector('.hamburger').setAttribute('aria-expanded', 'false');
                 });
             });
         });
