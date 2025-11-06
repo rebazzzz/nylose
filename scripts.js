@@ -24,8 +24,6 @@
                     <td>${item.day}</td>
                     <td>${item.time}</td>
                     <td>${item.activity}</td>
-                    <td>${item.level}</td>
-                    <td><button class="book-btn" onclick="bookSession('${item.day}', '${item.time}', '${item.activity}')">Boka</button></td>
                 `;
                 scheduleBody.appendChild(row);
             });
@@ -72,10 +70,20 @@
             this.reset();
         });
 
+        // Developer variable to test different object-fit values
+        // Change this value to test: 'contain', 'cover', 'fill', 'none', 'scale-down'
+        const imageFit = 'fill';
+
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
             populateSchedule();
-            
+
+            // Apply image fit to sport images for testing
+            const images = document.querySelectorAll('.sport-image img');
+            images.forEach(img => {
+                img.style.objectFit = imageFit;
+            });
+
             // Close mobile menu when clicking on a link
             document.querySelectorAll('.nav-links a').forEach(link => {
                 link.addEventListener('click', () => {
