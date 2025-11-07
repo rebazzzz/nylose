@@ -98,19 +98,17 @@
     <section class="schedule" id="schema">
         <div class="container">
             <h2 class="section-title">Schema</h2>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">Alla</button>
+                <button class="filter-btn" data-filter="brottning-barn">Brottning Barn</button>
+                <button class="filter-btn" data-filter="brottning-vuxna">Brottning Vuxna</button>
+                <button class="filter-btn" data-filter="girls-only">Girls Only</button>
+                <button class="filter-btn" data-filter="wresfit">Wresfit</button>
+            </div>
             <div class="schedule-container">
-                <table class="schedule-table">
-                    <thead>
-                        <tr>
-                            <th>Dag</th>
-                            <th>Tid</th>
-                            <th>Aktivitet</th>
-                        </tr>
-                    </thead>
-                    <tbody id="schedule-body">
-                        <!-- Schedule data will be populated by JavaScript -->
-                    </tbody>
-                </table>
+                <div class="weekly-schedule-cards" id="weekly-schedule-cards">
+                    <!-- Schedule cards will be populated by JavaScript -->
+                </div>
             </div>
         </div>
     </section>
