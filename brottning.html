@@ -3,27 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nylöse SportCenter - Kampsporter i Göteborg</title>
-    <meta name="description" content="Träna alla våra kampsporter för bara 600 kr per termin! Wresfit, Brottning, Girls Only. Välkommen till Nylöse SportCenter.">
-    <meta name="keywords" content="kampsport, brottning, wresfit, träning, göteborg, 600 kr per termin">
+    <title>Brottning - Nylöse SportCenter</title>
+    <meta name="description" content="Både Greco-Roman och Freestyle för barn och vuxna. Lär dig grunderna eller utveckla dina färdigheter. Träna för bara 600 kr per termin!">
+    <meta name="keywords" content="brottning, greco-roman, freestyle, kampsport, göteborg, 600 kr per termin">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/base.css">
-    <link rel="stylesheet" href="styles/index.css">
-    <link rel="stylesheet" href="styles/responsivity.css">
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="sports.css">
+    <link rel="stylesheet" href="responsivity.css">
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container nav-container">
-            <a href="#" class="logo">
+            <a href="index.html" class="logo">
                 <img src="images/logo.jpg" alt="Nylöse SportCenter Logo" >
                 Nylöse SportCenter
             </a>
             <ul class="nav-links">
-
-                <li><a href="index.html" class="current">Hem</a></li>
+                <li><a href="index.html">Hem</a></li>
                 <li><a href="#traningar">Sporter</a></li>
                 <li><a href="#schema">Schema</a></li>
                 <li><a href="#om-oss">Om oss</a></li>
@@ -47,12 +46,11 @@
     <!-- Hero Section -->
     <section class="hero" id="hem">
         <div class="container hero-content">
-            <h1>Din plats för kraft, teknik och gemenskap.</h1>
+            <h1>Både Greco-Roman och Freestyle för barn och vuxna</h1>
             <div class="price-badge">Träna allt för 600 kr/termin</div>
             <p>
-                <span class="highlight">Brottning, Wresfit & Girls Only.</span> <br>
-                Prova gratis i 2 veckor – ingen registrering, ingen utrustning. Kom som du är och börja träna idag!         
-             </p>
+                <span class="highlight">Brottning</span> är en klassisk kampsport som bygger karaktär, styrka och teknik. Vi erbjuder träning för alla åldrar och nivåer.
+            </p>
             <div>
                 <a href="#kontakt" class="btn btn-primary">Börja träna</a>
                 <a href="#schema" class="btn btn-secondary">Se schema</a>
@@ -63,33 +61,16 @@
     <!-- Sports Section -->
     <section class="sports" id="traningar">
         <div class="container">
-            <h2 class="section-title">Våra sporter</h2>
+            <h2 class="section-title">Om Brottning</h2>
             <div class="sports-grid">
-                <div class="sport-card">
-                    <div class="sport-image">
-                        <img src="images/Wresfit.jpg" alt="Wresfit training image">
-                    </div>
-                    <div class="sport-content">
-                        <h3 class="sport-title"><a href="wresfit.html">Wresfit</a></h3>
-                        <p>Funktionell styrketräning inspirerad av brottning. Perfekt för att bygga styrka, kondition och koordination.</p>
-                    </div>
-                </div>
                 <div class="sport-card">
                     <div class="sport-image">
                         <img src="images/brottning.jpg" alt="Brottning training image">
                     </div>
                     <div class="sport-content">
-                        <h3 class="sport-title"><a href="brottning.html">Brottning</a></h3>
-                        <p>Både Greco-Roman och Freestyle för barn och vuxna. Lär dig grunderna eller utveckla dina färdigheter.</p>
-                    </div>
-                </div>
-                <div class="sport-card">
-                    <div class="sport-image">
-                        <img src="images/girlsonly.jpeg" alt="Girls Only training image">
-                    </div>
-                    <div class="sport-content">
-                        <h3 class="sport-title"><a href="girlsonly.html">Girls Only</a></h3>
-                        <p>En trygg och motiverande miljö för tjejer. Få självförtroende och styrka i en exklusiv kvinnlig grupp.</p>
+                        <h3 class="sport-title">Vad är Brottning?</h3>
+                        <p>Brottning är en av världens äldsta kampsporter och kräver både fysisk styrka, teknik och mental uthållighet. Vi erbjuder både Greco-Roman (överkropp) och Freestyle (hela kroppen) för barn och vuxna.</p>
+                        <p>Lär dig grunderna från våra erfarna tränare eller utveckla dina färdigheter vidare. Brottning bygger självförtroende, disciplin och respekt för andra.</p>
                     </div>
                 </div>
             </div>
@@ -99,14 +80,7 @@
     <!-- Schedule Section -->
     <section class="schedule" id="schema">
         <div class="container">
-            <h2 class="section-title">Schema</h2>
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">Alla</button>
-                <button class="filter-btn" data-filter="brottning-barn">Brottning Barn</button>
-                <button class="filter-btn" data-filter="brottning-vuxna">Brottning Vuxna</button>
-                <button class="filter-btn" data-filter="girls-only">Girls Only</button>
-                <button class="filter-btn" data-filter="wresfit">Wresfit</button>
-            </div>
+            <h2 class="section-title">Brottning Schema</h2>
             <div class="schedule-container">
                 <div class="weekly-schedule-cards" id="weekly-schedule-cards">
                     <!-- Schedule cards will be populated by JavaScript -->
@@ -122,7 +96,7 @@
             <div class="about-content">
                 <p>Nylöse SportCenter har varit en del av Göteborgs idrottsliv sedan 2010. Vår filosofi är att alla ska ha möjlighet att träna kampsport oavsett bakgrund eller ekonomiska förutsättningar.</p>
                 <p>Vi tror på gemenskap, respekt och utveckling. Våra tränare är certifierade och har lång erfarenhet av både träning och tävling.</p>
-                
+
                 <div class="coaches-grid">
                     <div class="coach-card">
                         <div class="coach-image">Tränare 1</div>
@@ -242,6 +216,6 @@
         </div>
     </footer>
 
-    <script src="scripts.js"> </script>
+    <script src="scripts.js?sport=Brottning"></script>
 </body>
 </html>

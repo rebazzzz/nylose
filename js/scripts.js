@@ -12,13 +12,19 @@
         ];
 
         // Populate weekly schedule cards
-        function populateWeeklyScheduleCards() {
+        function populateWeeklyScheduleCards(sportFilter = null) {
             const scheduleContainer = document.getElementById('weekly-schedule-cards');
             scheduleContainer.innerHTML = '';
 
+            // Filter data if sportFilter is provided
+            let filteredData = scheduleData;
+            if (sportFilter) {
+                filteredData = scheduleData.filter(session => session.activity === sportFilter);
+            }
+
             // Group sessions by day
             const sessionsByDay = {};
-            scheduleData.forEach(session => {
+            filteredData.forEach(session => {
                 if (!sessionsByDay[session.day]) {
                     sessionsByDay[session.day] = [];
                 }
@@ -200,7 +206,10 @@
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            populateWeeklyScheduleCards();
+            // Check if we are on a sport-specific page
+            const urlParams = new URLSearchParams(window.location.search);
+            const sportFilter = urlParams.get('sport');
+            populateWeeklyScheduleCards(sportFilter);
 
             // Apply image fit to sport images for testing
             const images = document.querySelectorAll('.sport-image img');
