@@ -191,10 +191,12 @@
                 const navLinks = document.querySelector('.nav-links');
                 const hamburger = document.querySelector('.hamburger');
                 const overlay = document.querySelector('.menu-overlay');
-                navLinks.classList.remove('active');
-                hamburger.classList.remove('active');
-                overlay.classList.remove('active');
-                hamburger.setAttribute('aria-expanded', 'false');
+                if (navLinks) navLinks.classList.remove('active');
+                if (hamburger) {
+                    hamburger.classList.remove('active');
+                    hamburger.setAttribute('aria-expanded', 'false');
+                }
+                if (overlay) overlay.classList.remove('active');
             }
         });
 
@@ -208,17 +210,17 @@
             alert('Inloggningsfunktionalitet kommer att implementeras med backend');
         }
 
-        // Mock function for form submission
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Tack för ditt meddelande! Vi återkommer så snart som möjligt.');
-            this.reset();
-        });
-
-       
-
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            // Mock function for form submission
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('Tack för ditt meddelande! Vi återkommer så snart som möjligt.');
+                    this.reset();
+                });
+            }
             // Check if we are on a sport-specific page
             const urlParams = new URLSearchParams(window.location.search);
             const sportFilter = urlParams.get('sport');

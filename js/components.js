@@ -52,7 +52,19 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Load navbar and footer
     await loadComponent('navbar-placeholder', 'components/navbar.html');
     await loadComponent('footer-placeholder', 'components/footer.html');
-    
+
     // Set active navigation link after navbar is loaded
     setTimeout(setActiveNavLink, 100);
+
+    // Add event listeners for nav links after navbar is loaded
+    setTimeout(() => {
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.nav-links').classList.remove('active');
+                document.querySelector('.hamburger').classList.remove('active');
+                document.querySelector('.menu-overlay').classList.remove('active');
+                document.querySelector('.hamburger').setAttribute('aria-expanded', 'false');
+            });
+        });
+    }, 100);
 });
