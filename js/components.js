@@ -71,5 +71,15 @@ document.addEventListener("DOMContentLoaded", async function () {
           .setAttribute("aria-expanded", "false");
       });
     });
+
+    // Add modal event listener after navbar is loaded
+    const modal = document.getElementById("login-modal");
+    if (modal) {
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) {
+          closeLoginModal();
+        }
+      });
+    }
   }, 100);
 });

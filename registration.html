@@ -81,12 +81,12 @@
 
                     <div class="form-group checkbox-group">
                         <input type="checkbox" id="terms" name="terms" required>
-                        <label for="terms">Jag accepterar <a href="#" target="_blank">villkoren</a> och <a href="#"
-                                target="_blank">integritetspolicyn</a> *</label>
+                        <label for="terms">Jag accepterar <a href="gg.html">villkoren</a> och <a
+                                href="gg.html">integritetspolicyn</a> *</label>
                     </div>
 
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Betala & Registrera</button>
+                        <button type="button" class="btn btn-primary" id="register-btn">Betala & Registrera</button>
                     </div>
                 </form>
             </div>
@@ -97,6 +97,16 @@
 
     <!-- Footer Placeholder -->
     <div id="footer-placeholder"></div>
+
+    <!-- Registration Demo Modal -->
+    <div id="registration-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeRegistrationModal()">&times;</button>
+            <h2>Demo läge</h2>
+            <p>Detta är en frontend demo. Betalnings och registreringsfunktionalitet kommer att implementeras med
+                backend senare. Du kommer inte att registreras på riktigt.</p>
+        </div>
+    </div>
 
     <script src="js/registration.js"></script>
     <script src="js/scripts.js"></script>

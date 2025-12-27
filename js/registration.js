@@ -2,6 +2,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   const personnummerInput = document.getElementById("personnummer");
   const parentFields = document.querySelectorAll(".parent-field");
+  const registerBtn = document.getElementById("register-btn");
+  const modal = document.getElementById("registration-modal");
 
   if (personnummerInput) {
     const mask = "YYYYMMDD-XXXX";
@@ -81,6 +83,31 @@ document.addEventListener("DOMContentLoaded", function () {
           const input = field.querySelector("input");
           if (input) input.required = false;
         });
+      }
+    });
+  }
+
+  // Event listener for register button to show modal
+  if (registerBtn) {
+    registerBtn.addEventListener("click", function () {
+      if (modal) {
+        modal.style.display = "flex";
+      }
+    });
+  }
+
+  // Function to close the modal
+  window.closeRegistrationModal = function () {
+    if (modal) {
+      modal.style.display = "none";
+    }
+  };
+
+  // Close modal when clicking outside
+  if (modal) {
+    modal.addEventListener("click", function (e) {
+      if (e.target === modal) {
+        closeRegistrationModal();
       }
     });
   }

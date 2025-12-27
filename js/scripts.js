@@ -245,7 +245,14 @@ function bookSession(day, time, activity) {
 
 // Mock function for login
 function handleLoginClick() {
-  alert("Inloggningsfunktionalitet kommer att implementeras med backend");
+  const modal = document.getElementById("login-modal");
+  modal.style.display = "flex";
+}
+
+// Close login modal
+function closeLoginModal() {
+  const modal = document.getElementById("login-modal");
+  modal.style.display = "none";
 }
 
 // Initialize when page loads
@@ -295,4 +302,3 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
-
