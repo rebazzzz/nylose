@@ -120,8 +120,82 @@
   background-color: #005a9e;
 }
 
+/* Payment Options Section */
+.payment-options {
+  background-color: var(--background);
+  padding: var(--spacing-lg) 0;
+}
+
+.payment-intro {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+  color: var(--text);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.payment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.payment-card {
+  background-color: var(--bg-light-blue);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.payment-card:hover {
+  transform: translateY(-5px);
+}
+
+.payment-card i {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.payment-card h3 {
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.payment-details {
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.payment-details p {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.payment-note {
+  background-color: var(--bg-light-yellow);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .registration-hero .container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
   .registration-content {
     margin: 0 var(--spacing-sm);
     padding: var(--spacing-md);
@@ -129,5 +203,19 @@
 
   .section-title {
     font-size: 1.5rem;
+  }
+
+  .benefits-grid,
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .registration-hero .container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
   }
 }
