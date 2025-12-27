@@ -20,6 +20,9 @@
     --secondary: #0069BB;
     --text: #000000;
     --background: #FFFFFF;
+    --bg-cream: #F5F5F0;
+    --bg-light-blue: #E8F4FF;
+    --bg-light-yellow: #FFFBEA;
     --spacing-sm: 1rem;
     --spacing-md: 2rem;
     --spacing-lg: 4rem;
@@ -40,7 +43,7 @@ html {
 body {
     font-family: 'Poppins', sans-serif;
     color: var(--text);
-    background-color: var(--background);
+    background-color: var(--bg-cream);
     line-height: 1.6;
 }
 
@@ -70,7 +73,7 @@ section {
     width: 100%;
     background-color: var(--background);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 6px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     z-index: 1000;
     padding: 1.5rem 0;
 }
