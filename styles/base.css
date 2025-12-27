@@ -1,3 +1,19 @@
+/**
+ * BASE.CSS
+ * 
+ * This is the main centralized stylesheet that contains:
+ * - CSS Custom Properties (variables) for consistent theming
+ * - Base/reset styles for HTML elements
+ * - Navbar component styles (fixed navigation bar)
+ * - Footer component styles
+ * - Common utility classes (.container, .section-title)
+ * 
+ * This file should be loaded FIRST before any page-specific or responsive styles.
+ * It provides the foundation that all other stylesheets build upon.
+ * 
+ * Usage: Include this file in all HTML pages as the primary stylesheet.
+ */
+
 /* CSS Variables */
 :root {
     --primary: #F4ED15;

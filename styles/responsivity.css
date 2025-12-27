@@ -1,3 +1,27 @@
+/**
+ * RESPONSIVITY.CSS
+ * 
+ * This stylesheet contains all responsive design media queries for the website.
+ * It ensures the site looks great and functions properly on all device sizes.
+ * 
+ * Breakpoints:
+ * - @media (max-width: 1024px) - Tablets and small laptops
+ * - @media (max-width: 768px)  - Mobile devices and small tablets (includes mobile menu)
+ * - @media (max-width: 640px)  - Small mobile devices
+ * - @media (max-width: 480px)  - Extra small mobile devices
+ * 
+ * This file should be loaded LAST, after base.css and any page-specific stylesheets.
+ * It overrides styles from other files to adapt layouts for smaller screens.
+ * 
+ * Key responsive features:
+ * - Mobile navigation menu (hamburger menu)
+ * - Flexible grid layouts that stack on mobile
+ * - Adjusted font sizes and spacing for readability
+ * - Touch-friendly button and link sizes
+ * 
+ * Usage: Include this file on all HTML pages as the final stylesheet.
+ */
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .hero h1 {

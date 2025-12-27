@@ -1,3 +1,21 @@
+/**
+ * INDEX.CSS
+ * 
+ * This stylesheet contains all styles specific to the index.html (homepage).
+ * 
+ * Sections included:
+ * - Hero Section: Main landing area with headline, price badge, and CTA buttons
+ * - Sports Section: Grid layout showcasing the three sports (Wresfit, Brottning, Girls Only)
+ * - Schedule Section: Weekly schedule cards with filter buttons and session details
+ * - About Section: Information about the center and coaches grid
+ * - Contact Section: Contact information, map placeholder, and contact form
+ * 
+ * This file should be loaded AFTER base.css and BEFORE responsivity.css.
+ * It relies on CSS variables defined in base.css.
+ * 
+ * Usage: Include this file only on index.html page.
+ */
+
 /* Hero Section */
 .hero {
     padding: 8rem 0 4rem;

@@ -1,3 +1,27 @@
+/**
+ * SPORTS.CSS
+ * 
+ * This stylesheet contains styles specific to individual sport pages:
+ * - wresfit.html
+ * - brottning.html
+ * - girlsonly.html
+ * 
+ * Sections included:
+ * - Hero Section: Sport-specific hero with gradient background
+ * - Sports Section: Detailed information about the specific sport
+ * - Schedule Section: Weekly schedule display for the sport
+ * 
+ * Features:
+ * - Custom gradient hero backgrounds
+ * - Activity-specific color coding (Brottning: red, Wresfit: green, Girls Only: purple)
+ * - Responsive card layouts
+ * - Hover effects and animations
+ * 
+ * This file imports base.css (via styles.css) and includes its own responsive breakpoints.
+ * 
+ * Usage: Include this file on sport-specific pages (wresfit.html, brottning.html, girlsonly.html).
+ */
+
 /* Import base styles */
 @import url('styles.css');
 
