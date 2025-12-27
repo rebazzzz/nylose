@@ -296,9 +296,3 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Placeholder function for backend API calls
-function fetchSchedule() {
-  // This would be replaced with actual API call in backend implementation
-  console.log("Fetching schedule data from backend...");
-  return scheduleData;
-}
