@@ -1,8 +1,0 @@
-- [x] Add Open Graph tags to index.html
-- [x] Add Open Graph tags to about.html
-- [x] Add Open Graph tags to contact.html
-- [x] Add Open Graph tags to registration.html
-- [x] Add Open Graph tags to gg.html
-- [x] Add Open Graph tags to SCRAPPED/brottning.html
-- [x] Add Open Graph tags to SCRAPPED/girlsonly.html
-- [x] Add Open Graph tags to SCRAPPED/wresfit.html
