@@ -221,6 +221,59 @@
                     this.reset();
                 });
             }
+
+            // Registration form logic
+            const personnummerInput = document.getElementById('personnummer');
+            const parentFields = document.querySelectorAll('.parent-field');
+            if (personnummerInput) {
+                personnummerInput.addEventListener('input', function() {
+                    const value = this.value;
+                    // Hide placeholder by setting it to empty if user starts typing
+                    if (value.length > 0) {
+                        this.placeholder = '';
+                    } else {
+                        this.placeholder = 'YYYYMMDD-XXXX';
+                    }
+
+                    // Calculate age from personnummer
+                    if (value.length >= 8) {
+                        const birthDateStr = value.substring(0, 8);
+                        const year = parseInt(birthDateStr.substring(0, 4));
+                        const month = parseInt(birthDateStr.substring(4, 6)) - 1; // JS months are 0-based
+                        const day = parseInt(birthDateStr.substring(6, 8));
+                        const birthDate = new Date(year, month, day);
+                        const today = new Date();
+                        let age = today.getFullYear() - birthDate.getFullYear();
+                        const monthDiff = today.getMonth() - birthDate.getMonth();
+                        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                            age--;
+                        }
+
+                        // Show/hide parent fields
+                        if (age < 18) {
+                            parentFields.forEach(field => {
+                                field.style.display = 'block';
+                                const input = field.querySelector('input');
+                                if (input) input.required = true;
+                            });
+                        } else {
+                            parentFields.forEach(field => {
+                                field.style.display = 'none';
+                                const input = field.querySelector('input');
+                                if (input) input.required = false;
+                            });
+                        }
+                    } else {
+                        // Hide parent fields if personnummer is incomplete
+                        parentFields.forEach(field => {
+                            field.style.display = 'none';
+                            const input = field.querySelector('input');
+                            if (input) input.required = false;
+                        });
+                    }
+                });
+            }
+
             // Check if we are on a sport-specific page
             const urlParams = new URLSearchParams(window.location.search);
             const sportFilter = urlParams.get('sport');

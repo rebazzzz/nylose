@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrering - Nylöse SportCenter</title>
+    <meta name="description" content="Registrera dig för träning på Nylöse SportCenter. Välj din sport och börja träna idag!">
+    <meta name="keywords" content="registrering, kampsport, brottning, wresfit, girls only, göteborg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/registration.css">
+    <link rel="stylesheet" href="styles/responsivity.css">
+    <script src="js/components.js" defer></script>
+</head>
+<body>
+    <!-- Navbar Placeholder -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- Registration Section -->
+    <section class="registration">
+        <div class="container">
+            <h2 class="section-title">Registrera dig</h2>
+            <div class="registration-content">
+                <p>Fyll i formuläret nedan för att registrera dig för träning. Alla sporter ingår för endast 600 kr per termin!</p>
+                <form class="registration-form" action="#" method="post">
+                    <div class="form-group">
+                        <label for="firstname">Förnamn *</label>
+                        <input type="text" id="firstname" name="firstname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">Efternamn *</label>
+                        <input type="text" id="lastname" name="lastname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="personnummer">Personnummer *</label>
+                        <input type="text" id="personnummer" name="personnummer" placeholder="YYYYMMDD-XXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-postadress *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefonnummer *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Adress *</label>
+                        <input type="text" id="address" name="address" required>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">Jag accepterar <a href="#" target="_blank">villkoren</a> och <a href="#" target="_blank">integritetspolicyn</a> *</label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Registrera mig</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <script src="js/scripts.js"></script>
+</body>
+</html>
