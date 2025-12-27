@@ -12,37 +12,11 @@
     <link rel="stylesheet" href="styles/base.css">
     <link rel="stylesheet" href="styles/index.css">
     <link rel="stylesheet" href="styles/responsivity.css">
+    <script src="js/components.js" defer></script>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="container nav-container">
-            <a href="#" class="logo">
-                <img src="images/logo.jpg" alt="Nylöse SportCenter Logo" >
-                Nylöse SportCenter
-            </a>
-            <ul class="nav-links">
-
-                <li><a href="index.html" class="current">Hem</a></li>
-                <li><a href="#traningar">Sporter</a></li>
-                <li><a href="#schema">Schema</a></li>
-                <li><a href="#om-oss">Om oss</a></li>
-                <li><a href="#kontakt">Kontakt</a></li>
-            </ul>
-            <div class="profile-placeholder" onclick="handleLoginClick()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="#000000" stroke-width="2"/>
-                    <path d="M20 22C20 18.6863 16.4183 16 12 16C7.58172 16 4 18.6863 4 22" stroke="#000000" stroke-width="2"/>
-                </svg>
-            </div>
-            <div class="hamburger" onclick="toggleMenu()" aria-expanded="false" aria-label="Toggle navigation menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
-    <div class="menu-overlay" onclick="toggleMenu()"></div>
+    <!-- Navbar Placeholder -->
+    <div id="navbar-placeholder"></div>
 
     <!-- Hero Section -->
     <section class="hero" id="hem">
@@ -209,39 +183,9 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Nylöse SportCenter</h3>
-                    <p>Din plats för kampsport i Göteborg. Alla är välkomna oavsett erfarenhet!</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link">FB</a>
-                        <a href="#" class="social-link">IG</a>
-                        <a href="#" class="social-link">YT</a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h3>Öppettider</h3>
-                    <p>Mån-Fre: 08:00 - 22:00</p>
-                    <p>Lör: 09:00 - 18:00</p>
-                    <p>Sön: 10:00 - 16:00</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Kontakt</h3>
-                    <p>Nylösevägen 123</p>
-                    <p>417 56 Göteborg</p>
-                    <p>031-123 45 67</p>
-                    <p>info@nylosesportcenter.se</p>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2023 Nylöse SportCenter. Alla rättigheter förbehållna.</p>
-            </div>
-        </div>
-    </footer>
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
 
-    <script src="scripts.js"> </script>
+    <script src="js/scripts.js"></script>
 </body>
 </html>

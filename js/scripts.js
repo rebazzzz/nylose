@@ -200,9 +200,7 @@
             this.reset();
         });
 
-        // Developer variable to test different object-fit values
-        // Change this value to test: 'contain', 'cover', 'fill', 'none', 'scale-down'
-        const imageFit = 'fill';
+       
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
