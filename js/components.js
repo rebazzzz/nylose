@@ -53,8 +53,8 @@ function setActiveNavLink() {
 // Load components when DOM is ready
 document.addEventListener("DOMContentLoaded", async function () {
   // Load navbar and footer
-  await loadComponent("navbar-placeholder", "components/navbar.html");
-  await loadComponent("footer-placeholder", "components/footer.html");
+  await loadComponent("navbar-placeholder", "navbar.html");
+  await loadComponent("footer-placeholder", "footer.html");
 
   // Set active navigation link after navbar is loaded
   setTimeout(setActiveNavLink, 100);
