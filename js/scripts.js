@@ -12,14 +12,22 @@
         ];
 
         // Populate weekly schedule cards
-        function populateWeeklyScheduleCards(sportFilter = null) {
+        function populateWeeklyScheduleCards(filterKey = null) {
             const scheduleContainer = document.getElementById('weekly-schedule-cards');
             scheduleContainer.innerHTML = '';
 
-            // Filter data if sportFilter is provided
+            // Filter data if filterKey is provided
             let filteredData = scheduleData;
-            if (sportFilter) {
-                filteredData = scheduleData.filter(session => session.activity === sportFilter);
+            if (filterKey && filterKey !== 'all') {
+                if (filterKey === 'brottning-barn') {
+                    filteredData = scheduleData.filter(session => session.activity === 'Brottning' && session.level === 'Barn');
+                } else if (filterKey === 'brottning-vuxna') {
+                    filteredData = scheduleData.filter(session => session.activity === 'Brottning' && session.level === 'Vuxna');
+                } else if (filterKey === 'girls-only') {
+                    filteredData = scheduleData.filter(session => session.activity === 'Girls Only');
+                } else if (filterKey === 'wresfit') {
+                    filteredData = scheduleData.filter(session => session.activity === 'Wresfit');
+                }
             }
 
             // Group sessions by day
@@ -31,14 +39,12 @@
                 sessionsByDay[session.day].push(session);
             });
 
-            // Define days order
-            const days = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Söndag'];
-
             // Get current day
             const today = new Date().toLocaleDateString('sv-SE', { weekday: 'long' });
             const todayFormatted = today.charAt(0).toUpperCase() + today.slice(1);
 
-            days.forEach(day => {
+            // Only show days that have sessions
+            for (const day in sessionsByDay) {
                 const dayContainer = document.createElement('div');
                 dayContainer.className = `day-container ${day === todayFormatted ? 'today' : ''}`;
 
@@ -47,55 +53,56 @@
                 dayHeader.textContent = day;
                 dayContainer.appendChild(dayHeader);
 
-                const sessions = sessionsByDay[day] || [];
-                if (sessions.length > 0) {
-                    sessions.forEach(session => {
-                        const card = document.createElement('div');
-                        card.className = `session-card ${getActivityClass(session.activity)}`;
-                        card.setAttribute('data-filter', getFilterKey(session.activity, session.level));
+                const sessions = sessionsByDay[day];
+                sessions.forEach(session => {
+                    const card = document.createElement('div');
+                    card.className = `session-card ${getActivityClass(session.activity)} ${session.level.toLowerCase().replace(' ', '-')}`;
+                    card.setAttribute('data-filter', getFilterKey(session.activity, session.level));
 
-                        const icon = document.createElement('div');
-                        icon.className = 'session-icon';
-                        icon.innerHTML = getActivityIcon(session.activity);
+                    const icon = document.createElement('div');
+                    icon.className = 'session-icon';
+                    icon.innerHTML = getActivityIcon(session.activity, session.level);
 
-                        const content = document.createElement('div');
-                        content.className = 'session-content';
+                    const content = document.createElement('div');
+                    content.className = 'session-content';
 
-                        const time = document.createElement('div');
-                        time.className = 'session-time';
-                        time.textContent = session.time;
+                    const time = document.createElement('div');
+                    time.className = 'session-time';
+                    time.textContent = session.time;
 
-                        const activity = document.createElement('div');
-                        activity.className = 'session-activity';
-                        activity.textContent = session.activity;
+                    const activity = document.createElement('div');
+                    activity.className = 'session-activity';
+                    activity.textContent = session.activity;
 
-                        const level = document.createElement('div');
-                        level.className = 'session-level';
-                        level.textContent = session.level;
+                    const level = document.createElement('div');
+                    level.className = 'session-level';
+                    level.textContent = session.level;
 
-                        const description = document.createElement('div');
-                        description.className = 'session-description';
-                        description.textContent = 'Ingen registrering krävs. Ta bara bekväma kläder.';
+                    const description = document.createElement('div');
+                    description.className = 'session-description';
+                    description.textContent = 'Ingen registrering krävs. Ta bara bekväma kläder.';
 
-                        content.appendChild(time);
-                        content.appendChild(activity);
-                        content.appendChild(level);
-                        content.appendChild(description);
+                    content.appendChild(time);
+                    content.appendChild(activity);
+                    content.appendChild(level);
+                    content.appendChild(description);
 
-                        card.appendChild(icon);
-                        card.appendChild(content);
+                    card.appendChild(icon);
+                    card.appendChild(content);
 
-                        dayContainer.appendChild(card);
-                    });
-                } else {
-                    const noSessions = document.createElement('div');
-                    noSessions.className = 'no-sessions';
-                    noSessions.textContent = 'Inga träningar idag';
-                    dayContainer.appendChild(noSessions);
-                }
+                    dayContainer.appendChild(card);
+                });
 
                 scheduleContainer.appendChild(dayContainer);
-            });
+            }
+
+            // If no sessions after filtering, show a message
+            if (Object.keys(sessionsByDay).length === 0) {
+                const noSessions = document.createElement('div');
+                noSessions.className = 'no-sessions';
+                noSessions.textContent = 'Inga träningar hittades för denna filtrering.';
+                scheduleContainer.appendChild(noSessions);
+            }
         }
 
         // Get filter key for session
@@ -134,20 +141,28 @@
         }
 
         // Get icon for activity
-        function getActivityIcon(activity) {
+        function getActivityIcon(activity, level) {
             switch (activity) {
                 case 'Brottning':
-                    return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                        <path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="2"/>
-                    </svg>`;
+                    if (level === 'Barn') {
+                        // Star icon for kids
+                        return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+                        </svg>`;
+                    } else {
+                        // Star icon for adults
+                        return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+                        </svg>`;
+                    }
                 case 'Wresfit':
+                    // Dumbbell icon
                     return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 6h12M6 10h12M6 14h12M6 18h12" stroke="currentColor" stroke-width="2"/>
-                        <circle cx="9" cy="6" r="1" fill="currentColor"/>
-                        <circle cx="15" cy="10" r="1" fill="currentColor"/>
-                        <circle cx="9" cy="14" r="1" fill="currentColor"/>
-                        <circle cx="15" cy="18" r="1" fill="currentColor"/>
+                        <path d="M6 8h2v8H6V8zM16 8h2v8h-2V8zM8 6h8v2H8V6zM8 16h8v2H8v-2z" fill="currentColor"/>
+                        <circle cx="5" cy="10" r="1" fill="currentColor"/>
+                        <circle cx="19" cy="10" r="1" fill="currentColor"/>
+                        <circle cx="5" cy="14" r="1" fill="currentColor"/>
+                        <circle cx="19" cy="14" r="1" fill="currentColor"/>
                     </svg>`;
                 case 'Girls Only':
                     return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -209,12 +224,6 @@
             const sportFilter = urlParams.get('sport');
             populateWeeklyScheduleCards(sportFilter);
 
-            // Apply image fit to sport images for testing
-            const images = document.querySelectorAll('.sport-image img');
-            images.forEach(img => {
-                img.style.objectFit = imageFit;
-            });
-
             // Close mobile menu when clicking on a link
             document.querySelectorAll('.nav-links a').forEach(link => {
                 link.addEventListener('click', () => {
@@ -228,13 +237,14 @@
             // Add filter button event listeners
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
+                    console.log('Filter button clicked:', this.getAttribute('data-filter'));
                     // Remove active class from all buttons
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                     // Add active class to clicked button
                     this.classList.add('active');
                     // Filter sessions
                     const filter = this.getAttribute('data-filter');
-                    filterSessions(filter);
+                    populateWeeklyScheduleCards(filter);
                 });
             });
         });

@@ -238,14 +238,19 @@
     flex-shrink: 0;
 }
 
-.session-card.brottning .session-icon {
-    background-color: #4CAF50;
+.session-card.brottning.barn .session-icon {
+    background-color: var(--primary);
+    color: black;
+}
+
+.session-card.brottning.vuxna .session-icon {
+    background-color: var(--secondary);
     color: white;
 }
 
 .session-card.wresfit .session-icon {
-    background-color: #FFC107;
-    color: black;
+    background-color: #FFA500; /* Orange for strength */
+    color: white;
 }
 
 .session-card.girls-only .session-icon {
