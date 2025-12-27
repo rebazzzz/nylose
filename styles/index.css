@@ -18,10 +18,15 @@
 
 /* Hero Section */
 .hero {
-  padding: 8rem 0 4rem;
+  min-height: 100vh;
+  padding-top: 6.5rem;
+  padding-bottom: 2rem;
   text-align: center;
   background: linear-gradient(135deg, #e8f4ff 0%, #fffbea 100%);
   background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-content {

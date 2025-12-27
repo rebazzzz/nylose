@@ -188,9 +188,15 @@ footer {
   color: var(--primary);
 }
 
+.footer-section iframe {
+  border: 0;
+  border-radius: 8px;
+}
+
 .social-links {
   display: flex;
   gap: 1rem;
+  margin-top: 0.5rem;
 }
 
 .social-link {
