@@ -36,11 +36,7 @@
     line-height: 1.2;
 }
 
-.hero p {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
-    color: red;
-}
+
 
 .price-badge {
     display: inline-block;
@@ -66,7 +62,7 @@
 }
 
 .btn-primary {
-    background-color: var(--primary);
+    background-color: red;
     color: var(--text);
 }
 
