@@ -1,0 +1,44 @@
+
+/* About Section */
+body {
+  background-color: var(--bg-light-yellow);
+}
+
+.page-title {
+  text-align: center;
+  margin-top: 7rem;
+  margin-bottom: var(--spacing-md);
+  font-size: 2.5rem;
+}
+
+.about-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.coaches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.coach-card {
+  background-color: var(--background);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.coach-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
