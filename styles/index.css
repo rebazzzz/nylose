@@ -22,8 +22,11 @@
   padding-top: 6.5rem;
   padding-bottom: 2rem;
   text-align: center;
-  background: linear-gradient(135deg, #e8f4ff 0%, #fffbea 100%);
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url("/images/468963168_593479613130596_5449287415536665249_n.jpg");
   background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,15 +42,18 @@
   margin-top: 1rem;
   margin-bottom: 1.5rem;
   line-height: 1.2;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .motivational-text {
   font-size: 1.1rem;
   font-weight: 400;
   font-style: italic;
-  color: var(--secondary);
+  color: white;
   margin: 0.5rem 0 1rem 0;
   line-height: 1.4;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 .price-badge {
