@@ -76,19 +76,17 @@
     right: -300px;
     width: 300px;
     height: auto;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    background: var(--bg-light-yellow);
     border-radius: 15px 0 0 15px;
-    box-shadow: -5px 5px 20px rgba(0, 0, 0, 0.3);
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     padding: 2rem 1rem;
-    transition: right 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    transition: right 0.3s ease-in-out;
     gap: 2rem;
     z-index: 999;
     max-height: calc(100vh - 80px);
     overflow-y: auto;
-    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .nav-links.active {
@@ -103,13 +101,12 @@
     width: 100%;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .close-icon {
     background: none;
     border: none;
-    color: white;
+    color: var(--text);
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
@@ -118,7 +115,8 @@
   }
 
   .close-icon:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--secondary);
+    color: white;
   }
 
   .menu-overlay {
@@ -127,7 +125,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.2);
     z-index: 998;
     opacity: 0;
     visibility: hidden;
@@ -146,17 +144,18 @@
 
   .nav-links a {
     display: block;
-    padding: 1rem;
+    padding: 1.5rem;
     width: 100%;
     border-radius: 8px;
-    transition: background-color 0.3s;
-    color: white;
-    background-color: rgba(255, 255, 255, 0.05);
+    transition: background-color 0.3s, color 0.3s;
+    color: var(--text);
+    background-color: transparent;
   }
 
   .nav-links a:hover,
   .nav-links a.current {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--secondary);
+    color: white;
   }
 
   .nav-links a.current {
