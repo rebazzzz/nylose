@@ -49,13 +49,7 @@ const scheduleData = [
     time: "13:00-14:00",
     activity: "Brottning",
     level: "6-15 år",
-  },
-  {
-    day: "Söndag",
-    time: "14:00-15:00",
-    activity: "Girls Only",
-    level: "Alla nivåer",
-  },
+  }
 ];
 
 // Populate weekly schedule cards
