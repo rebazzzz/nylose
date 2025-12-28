@@ -9,9 +9,15 @@ const scheduleData = [
   { day: "Måndag", time: "19:00-20:30", activity: "Brottning", level: "15+" },
   {
     day: "Tisdag",
-    time: "16:00-22:00",
+    time: "17:30-18:30",
     activity: "Girls Only",
-    level: "Alla nivåer",
+    level: "7-13 år",
+  },
+  {
+    day: "Tisdag",
+    time: "18:30-19:45",
+    activity: "Girls Only",
+    level: "13+",
   },
   {
     day: "Onsdag",
@@ -22,15 +28,21 @@ const scheduleData = [
   { day: "Onsdag", time: "19:00-20:30", activity: "Brottning", level: "15+" },
   {
     day: "Torsdag",
-    time: "16:00-22:00",
+    time: "17:30-18:30",
     activity: "Girls Only",
-    level: "Alla nivåer",
+    level: "7-13 år",
+  },
+  {
+    day: "Torsdag",
+    time: "18:30-19:45",
+    activity: "Girls Only",
+    level: "13+",
   },
   {
     day: "Fredag",
     time: "18:00-20:00",
     activity: "Wresfit",
-    level: "Alla nivåer & åldrar",
+    level: "Alla åldrar",
   },
   {
     day: "Söndag",
@@ -66,6 +78,16 @@ function populateWeeklyScheduleCards(filterKey = null) {
     } else if (filterKey === "girls-only") {
       filteredData = scheduleData.filter(
         (session) => session.activity === "Girls Only"
+      );
+    } else if (filterKey === "girls-only-7-13") {
+      filteredData = scheduleData.filter(
+        (session) =>
+          session.activity === "Girls Only" && session.level === "7-13 år"
+      );
+    } else if (filterKey === "girls-only-13") {
+      filteredData = scheduleData.filter(
+        (session) =>
+          session.activity === "Girls Only" && session.level === "13+"
       );
     } else if (filterKey === "wresfit") {
       filteredData = scheduleData.filter(
@@ -156,7 +178,13 @@ function getFilterKey(activity, level) {
   if (activity === "Brottning") {
     return level === "6-15 år" ? "brottning-barn" : "brottning-vuxna";
   } else if (activity === "Girls Only") {
-    return "girls-only";
+    if (level === "7-13 år") {
+      return "girls-only-7-13";
+    } else if (level === "13+") {
+      return "girls-only-13";
+    } else {
+      return "girls-only";
+    }
   } else if (activity === "Wresfit") {
     return "wresfit";
   }
