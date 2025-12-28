@@ -104,7 +104,7 @@ function populateWeeklyScheduleCards(filterKey = null) {
       const card = document.createElement("div");
       card.className = `session-card ${getActivityClass(
         session.activity
-      )} ${session.level.toLowerCase().replace(" ", "-")}`;
+      )} ${getLevelClass(session.level)}`;
       card.setAttribute(
         "data-filter",
         getFilterKey(session.activity, session.level)
@@ -188,6 +188,16 @@ function getActivityClass(activity) {
     default:
       return "";
   }
+}
+
+// Get CSS class for level
+function getLevelClass(level) {
+  if (level === "6-15 år") {
+    return "barn";
+  } else if (level === "15+") {
+    return "vuxna";
+  }
+  return "";
 }
 
 // Get icon for activity
