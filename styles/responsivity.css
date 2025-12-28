@@ -178,6 +178,19 @@
     font-size: 2.5rem;
   }
 
+  .intro-headline {
+    font-size: 2rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: 1.5em;
+  }
+
   .filter-buttons {
     flex-direction: row;
     overflow-x: auto;
