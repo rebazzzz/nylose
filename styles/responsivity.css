@@ -165,17 +165,17 @@
   }
 
   .hero h1 {
-    font-size: 2rem;
+    font-size: 3rem;
     margin-bottom: 1rem;
   }
 
   .hero p {
-    font-size: 1.1rem;
+    font-size: 2rem;
     margin-bottom: 1.5rem;
   }
 
   .section-title {
-    font-size: 1.75rem;
+    font-size: 2.5rem;
   }
 
   .filter-buttons {
@@ -308,11 +308,11 @@
   }
 
   .hero h1 {
-    font-size: 1.75rem;
+    font-size: 2.5rem;
   }
 
   .hero p {
-    font-size: 1rem;
+    font-size: 1.75rem;
   }
 
   .price-badge {
@@ -434,12 +434,12 @@
   }
 
   .hero h1 {
-    font-size: 1.5rem;
+    font-size: 2rem;
     margin-bottom: 0.75rem;
   }
 
   .hero p {
-    font-size: 0.95rem;
+    font-size: 1.5rem;
     margin-bottom: 1rem;
   }
 
@@ -456,7 +456,7 @@
   }
 
   .section-title {
-    font-size: 1.5rem;
+    font-size: 2rem;
     margin-bottom: var(--spacing-sm);
   }
 
@@ -477,7 +477,7 @@
   }
 
   .sport-title {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
   }
 
   .schedule-table th,
