@@ -1,15 +1,25 @@
 // Mock data for schedule
 const scheduleData = [
-  { day: "Måndag", time: "18:00-19:00", activity: "Brottning", level: "Barn" },
-  { day: "Måndag", time: "19:00-20:30", activity: "Brottning", level: "Vuxna" },
+  {
+    day: "Måndag",
+    time: "18:00-19:00",
+    activity: "Brottning",
+    level: "6-15 år",
+  },
+  { day: "Måndag", time: "19:00-20:30", activity: "Brottning", level: "15+" },
   {
     day: "Tisdag",
     time: "16:00-22:00",
     activity: "Girls Only",
     level: "Alla nivåer",
   },
-  { day: "Onsdag", time: "18:00-19:00", activity: "Brottning", level: "Barn" },
-  { day: "Onsdag", time: "19:00-20:30", activity: "Brottning", level: "Vuxna" },
+  {
+    day: "Onsdag",
+    time: "18:00-19:00",
+    activity: "Brottning",
+    level: "6-15 år",
+  },
+  { day: "Onsdag", time: "19:00-20:30", activity: "Brottning", level: "15+" },
   {
     day: "Torsdag",
     time: "16:00-22:00",
@@ -22,7 +32,12 @@ const scheduleData = [
     activity: "Wresfit",
     level: "Alla nivåer & åldrar",
   },
-  { day: "Söndag", time: "13:00-14:00", activity: "Brottning", level: "Barn" },
+  {
+    day: "Söndag",
+    time: "13:00-14:00",
+    activity: "Brottning",
+    level: "6-15 år",
+  },
   {
     day: "Söndag",
     time: "14:00-15:00",
@@ -42,12 +57,11 @@ function populateWeeklyScheduleCards(filterKey = null) {
     if (filterKey === "brottning-barn") {
       filteredData = scheduleData.filter(
         (session) =>
-          session.activity === "Brottning" && session.level === "Barn"
+          session.activity === "Brottning" && session.level === "6-15 år"
       );
     } else if (filterKey === "brottning-vuxna") {
       filteredData = scheduleData.filter(
-        (session) =>
-          session.activity === "Brottning" && session.level === "Vuxna"
+        (session) => session.activity === "Brottning" && session.level === "15+"
       );
     } else if (filterKey === "girls-only") {
       filteredData = scheduleData.filter(
@@ -140,7 +154,7 @@ function populateWeeklyScheduleCards(filterKey = null) {
 // Get filter key for session
 function getFilterKey(activity, level) {
   if (activity === "Brottning") {
-    return level === "Barn" ? "brottning-barn" : "brottning-vuxna";
+    return level === "6-15 år" ? "brottning-barn" : "brottning-vuxna";
   } else if (activity === "Girls Only") {
     return "girls-only";
   } else if (activity === "Wresfit") {
@@ -180,7 +194,7 @@ function getActivityClass(activity) {
 function getActivityIcon(activity, level) {
   switch (activity) {
     case "Brottning":
-      if (level === "Barn") {
+      if (level === "6-15 år") {
         // Star icon for kids
         return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
