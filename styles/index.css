@@ -353,10 +353,7 @@
   border-radius: 50%;
   transition: background-color 0.3s;
 }
-.value-card:hover .value-icon {
-  background-color: var(--primary);
-  color: var(--text);
-}
+
 .value-icon svg {
   width: 30px;
   height: 30px;
