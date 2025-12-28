@@ -125,22 +125,31 @@
 .btn svg {
   margin-right: 8px;
   flex-shrink: 0;
+}
 
-/* intro section */
+/* Intro Statement Section */
+.intro-statement {
+  background-color: white;
+  padding: var(--spacing-lg) 0;
+  text-align: center;
+}
 
+.intro-headline {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: var(--spacing-sm);
+}
 
+.statement {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
 
-
-
-
-
-
-
-
-
-
-
-} /* Sports Section */
+/* Sports Section */
 .sports {
   background-color: var(--bg-light-blue);
 }
@@ -311,9 +320,10 @@
   text-align: center;
   color: #999;
   font-style: italic;
-} /* Values Section */
+}
+/* Values Section */
 .content-section {
-  background-color: var(--bg-light-blue);
+  background-color: var(--bg-cream);
 }
 .values-grid {
   display: grid;
