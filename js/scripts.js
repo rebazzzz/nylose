@@ -1,90 +1,108 @@
-// Mock data for schedule
-const scheduleData = [
-  {
-    day: "Måndag",
-    time: "18:00-19:00",
-    activity: "Brottning",
-    level: "6-15 år",
-  },
-  { day: "Måndag", time: "19:00-20:30", activity: "Brottning", level: "15+" },
-  {
-    day: "Tisdag",
-    time: "17:30-18:30",
-    activity: "Girls Only",
-    level: "7-13 år",
-  },
-  {
-    day: "Tisdag",
-    time: "18:30-19:45",
-    activity: "Girls Only",
-    level: "13+",
-  },
-  {
-    day: "Onsdag",
-    time: "18:00-19:00",
-    activity: "Brottning",
-    level: "6-15 år",
-  },
-  { day: "Onsdag", time: "19:00-20:30", activity: "Brottning", level: "15+" },
-  {
-    day: "Torsdag",
-    time: "17:30-18:30",
-    activity: "Girls Only",
-    level: "7-13 år",
-  },
-  {
-    day: "Torsdag",
-    time: "18:30-19:45",
-    activity: "Girls Only",
-    level: "13+",
-  },
-  {
-    day: "Fredag",
-    time: "18:00-20:00",
-    activity: "Wresfit",
-    level: "Alla åldrar",
-  },
-  {
-    day: "Söndag",
-    time: "13:00-14:00",
-    activity: "Brottning",
-    level: "6-15 år",
+// API configuration
+const API_BASE_URL = "http://localhost:3001/api";
+
+// Global variable to store schedule data
+let scheduleData = [];
+let sportsData = [];
+
+// API helper functions
+async function fetchFromAPI(endpoint) {
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.warn(`API call failed for ${endpoint}:`, error.message);
+    return null;
   }
-];
+}
+
+async function loadScheduleData() {
+  const data = await fetchFromAPI("/public/schedule");
+  scheduleData = data || getMockScheduleData();
+}
+
+async function loadSportsData() {
+  const data = await fetchFromAPI("/public/sports");
+  sportsData = data || getMockSportsData();
+}
+
+// Mock data fallbacks
+function getMockScheduleData() {
+  return [
+    {
+      day_of_week: "Måndag",
+      start_time: "18:00",
+      end_time: "19:00",
+      sport_name: "Brottning",
+      age_group: "6-15 år",
+    },
+    {
+      day_of_week: "Onsdag",
+      start_time: "19:00",
+      end_time: "20:00",
+      sport_name: "Wresfit",
+      age_group: "15+",
+    },
+    {
+      day_of_week: "Fredag",
+      start_time: "17:00",
+      end_time: "18:00",
+      sport_name: "Girls Only",
+      age_group: "7-13 år",
+    },
+  ];
+}
+
+function getMockSportsData() {
+  return [
+    { name: "Brottning", description: "Greco-Roman och Freestyle brottning" },
+    { name: "Wresfit", description: "Funktionell styrketräning" },
+    { name: "Girls Only", description: "Boxning för tjejer" },
+  ];
+}
 
 // Populate weekly schedule cards
 function populateWeeklyScheduleCards(filterKey = null) {
   const scheduleContainer = document.getElementById("weekly-schedule-cards");
   scheduleContainer.innerHTML = "";
 
+  // Transform API data to match expected format
+  let transformedData = scheduleData.map((session) => ({
+    day: session.day_of_week,
+    time: `${session.start_time}-${session.end_time}`,
+    activity: session.sport_name,
+    level: session.age_group,
+  }));
+
   // Filter data if filterKey is provided
-  let filteredData = scheduleData;
+  let filteredData = transformedData;
   if (filterKey && filterKey !== "all") {
     if (filterKey === "brottning-barn") {
-      filteredData = scheduleData.filter(
+      filteredData = transformedData.filter(
         (session) =>
           session.activity === "Brottning" && session.level === "6-15 år"
       );
     } else if (filterKey === "brottning-vuxna") {
-      filteredData = scheduleData.filter(
+      filteredData = transformedData.filter(
         (session) => session.activity === "Brottning" && session.level === "15+"
       );
     } else if (filterKey === "girls-only") {
-      filteredData = scheduleData.filter(
+      filteredData = transformedData.filter(
         (session) => session.activity === "Girls Only"
       );
     } else if (filterKey === "girls-only-7-13") {
-      filteredData = scheduleData.filter(
+      filteredData = transformedData.filter(
         (session) =>
           session.activity === "Girls Only" && session.level === "7-13 år"
       );
     } else if (filterKey === "girls-only-13") {
-      filteredData = scheduleData.filter(
+      filteredData = transformedData.filter(
         (session) =>
           session.activity === "Girls Only" && session.level === "13+"
       );
     } else if (filterKey === "wresfit") {
-      filteredData = scheduleData.filter(
+      filteredData = transformedData.filter(
         (session) => session.activity === "Wresfit"
       );
     }
@@ -302,7 +320,11 @@ function closeLoginModal() {
 }
 
 // Initialize when page loads
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+  // Load data from API
+  await loadScheduleData();
+  await loadSportsData();
+
   // Mock function for form submission
   const contactForm = document.getElementById("contact-form");
   if (contactForm) {
