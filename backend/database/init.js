@@ -132,9 +132,11 @@ class Database {
 
   async seedInitialData() {
     try {
-      // Check if we already have data
-      const adminExists = await this.getUserByEmail("admin@nylose.se");
-      if (adminExists) {
+      // Check if we already have data by counting users
+      const userCount = await this.getQuery(
+        "SELECT COUNT(*) as count FROM users"
+      );
+      if (userCount.count > 0) {
         console.log("Initial data already exists, skipping seed");
         return;
       }
@@ -146,7 +148,7 @@ class Database {
         ["admin@nylose.se", adminPassword, "Admin", "User", "admin"]
       );
 
-      // Seed initial sports
+      // Seed initial sports (only if they don't exist)
       const sports = [
         {
           name: "Brottning",
@@ -166,13 +168,19 @@ class Database {
       ];
 
       for (const sport of sports) {
-        await this.runQuery(
-          "INSERT INTO sports (name, description, age_groups) VALUES (?, ?, ?)",
-          [sport.name, sport.description, sport.age_groups]
+        const existingSport = await this.getQuery(
+          "SELECT id FROM sports WHERE name = ?",
+          [sport.name]
         );
+        if (!existingSport) {
+          await this.runQuery(
+            "INSERT INTO sports (name, description, age_groups) VALUES (?, ?, ?)",
+            [sport.name, sport.description, sport.age_groups]
+          );
+        }
       }
 
-      // Seed initial schedule (matching the mock data from frontend)
+      // Seed initial schedule (matching the actual schedule provided by user)
       const scheduleData = [
         {
           sport_name: "Brottning",
@@ -247,21 +255,28 @@ class Database {
       ];
 
       for (const session of scheduleData) {
-        const sport = await this.runQuery(
+        const sport = await this.getQuery(
           "SELECT id FROM sports WHERE name = ?",
           [session.sport_name]
         );
         if (sport) {
-          await this.runQuery(
-            "INSERT INTO schedules (sport_id, day_of_week, start_time, end_time, age_group) VALUES (?, ?, ?, ?, ?)",
-            [
-              sport.id,
-              session.day,
-              session.start,
-              session.end,
-              session.age_group,
-            ]
+          // Check if schedule already exists
+          const existingSchedule = await this.getQuery(
+            "SELECT id FROM schedules WHERE sport_id = ? AND day_of_week = ? AND start_time = ? AND age_group = ?",
+            [sport.id, session.day, session.start, session.age_group]
           );
+          if (!existingSchedule) {
+            await this.runQuery(
+              "INSERT INTO schedules (sport_id, day_of_week, start_time, end_time, age_group) VALUES (?, ?, ?, ?, ?)",
+              [
+                sport.id,
+                session.day,
+                session.start,
+                session.end,
+                session.age_group,
+              ]
+            );
+          }
         }
       }
 
