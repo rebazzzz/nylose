@@ -35,21 +35,87 @@ function getMockScheduleData() {
       start_time: "18:00",
       end_time: "19:00",
       sport_name: "Brottning",
-      age_group: "6-15 år",
+      age_group: "6-13 år",
     },
+
+    {
+      day_of_week: "Måndag",
+      start_time: "19:00",
+      end_time: "21:00",
+      sport_name: "Brottning",
+      age_group: "14+",
+    },
+
+    {
+      day_of_week: "Tisdag",
+      start_time: "17:30",
+      end_time: "18:30",
+      sport_name: "Girls Only",
+      age_group: "7-13 år",
+    },
+
+    {
+      day_of_week: "Tisdag",
+      start_time: "18:30",
+      end_time: "19:45",
+      sport_name: "Girls Only",
+      age_group: "13+",
+    },
+
+    {
+      day_of_week: "Onsdag",
+      start_time: "18:00",
+      end_time: "19:00",
+      sport_name: "Brottning",
+      age_group: "6-13 år",
+    },
+
     {
       day_of_week: "Onsdag",
       start_time: "19:00",
-      end_time: "20:00",
-      sport_name: "Wresfit",
-      age_group: "15+",
+      end_time: "21:00",
+      sport_name: "Brottning",
+      age_group: "14+",
     },
+
     {
-      day_of_week: "Fredag",
-      start_time: "17:00",
-      end_time: "18:00",
+      day_of_week: "Torsdag",
+      start_time: "17:30",
+      end_time: "18:30",
       sport_name: "Girls Only",
       age_group: "7-13 år",
+    },
+
+    {
+      day_of_week: "Torsdag",
+      start_time: "18:30",
+      end_time: "19:45",
+      sport_name: "Girls Only",
+      age_group: "13+",
+    },
+
+    {
+      day_of_week: "Fredag",
+      start_time: "18:00",
+      end_time: "20:00",
+      sport_name: "Wresfit",
+      age_group: "Alla åldrar",
+    },
+
+    {
+      day_of_week: "Söndag",
+      start_time: "12:00",
+      end_time: "13:00",
+      sport_name: "Brottning",
+      age_group: "6-13 år",
+    },
+
+    {
+      day_of_week: "Söndag",
+      start_time: "13:00",
+      end_time: "14:00",
+      sport_name: "Brottning",
+      age_group: "14+",
     },
   ];
 }
@@ -81,29 +147,30 @@ function populateWeeklyScheduleCards(filterKey = null) {
     if (filterKey === "brottning-barn") {
       filteredData = transformedData.filter(
         (session) =>
-          session.activity === "Brottning" && session.level === "6-15 år"
+          session.activity === "Brottning" && session.level === "6-13 år",
       );
     } else if (filterKey === "brottning-vuxna") {
       filteredData = transformedData.filter(
-        (session) => session.activity === "Brottning" && session.level === "15+"
+        (session) =>
+          session.activity === "Brottning" && session.level === "14+",
       );
     } else if (filterKey === "girls-only") {
       filteredData = transformedData.filter(
-        (session) => session.activity === "Girls Only"
+        (session) => session.activity === "Girls Only",
       );
     } else if (filterKey === "girls-only-7-13") {
       filteredData = transformedData.filter(
         (session) =>
-          session.activity === "Girls Only" && session.level === "7-13 år"
+          session.activity === "Girls Only" && session.level === "7-13 år",
       );
     } else if (filterKey === "girls-only-13") {
       filteredData = transformedData.filter(
         (session) =>
-          session.activity === "Girls Only" && session.level === "13+"
+          session.activity === "Girls Only" && session.level === "13+",
       );
     } else if (filterKey === "wresfit") {
       filteredData = transformedData.filter(
-        (session) => session.activity === "Wresfit"
+        (session) => session.activity === "Wresfit",
       );
     }
   }
@@ -137,11 +204,11 @@ function populateWeeklyScheduleCards(filterKey = null) {
     sessions.forEach((session) => {
       const card = document.createElement("div");
       card.className = `session-card ${getActivityClass(
-        session.activity
+        session.activity,
       )} ${getLevelClass(session.level)}`;
       card.setAttribute(
         "data-filter",
-        getFilterKey(session.activity, session.level)
+        getFilterKey(session.activity, session.level),
       );
 
       const icon = document.createElement("div");
@@ -188,7 +255,7 @@ function populateWeeklyScheduleCards(filterKey = null) {
 // Get filter key for session
 function getFilterKey(activity, level) {
   if (activity === "Brottning") {
-    return level === "6-15 år" ? "brottning-barn" : "brottning-vuxna";
+    return level === "6-13 år" ? "brottning-barn" : "brottning-vuxna";
   } else if (activity === "Girls Only") {
     if (level === "7-13 år") {
       return "girls-only-7-13";
@@ -232,9 +299,9 @@ function getActivityClass(activity) {
 
 // Get CSS class for level
 function getLevelClass(level) {
-  if (level === "6-15 år") {
+  if (level === "6-13 år" || level === "7-13 år") {
     return "barn";
-  } else if (level === "15+") {
+  } else if (level === "14+" || level === "13+") {
     return "vuxna";
   }
   return "";
@@ -244,7 +311,7 @@ function getLevelClass(level) {
 function getActivityIcon(activity, level) {
   switch (activity) {
     case "Brottning":
-      if (level === "6-15 år") {
+      if (level === "6-13 år") {
         // Star icon for kids
         return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
@@ -303,7 +370,7 @@ document.addEventListener("keydown", function (e) {
 // Mock function for booking
 function bookSession(day, time, activity) {
   alert(
-    `Bokning för ${activity} ${day} ${time} har lagts till. (Funktionalitet kommer att implementeras med backend)`
+    `Bokning för ${activity} ${day} ${time} har lagts till. (Funktionalitet kommer att implementeras med backend)`,
   );
 }
 

@@ -251,7 +251,7 @@
 }
 .day-container.today .day-header {
   background-color: var(--primary);
-  color: var(--text);
+  color: black;
 }
 .session-card {
   border-bottom: 1px solid #eee;
@@ -288,8 +288,12 @@
   background-color: #ffa500; /* Orange for strength */
   color: white;
 }
-.session-card.girls-only .session-icon {
+.session-card.girls-only.barn .session-icon {
   background-color: #e91e63;
+  color: white;
+}
+.session-card.girls-only.vuxna .session-icon {
+  background-color: #9c27b0;
   color: white;
 }
 .session-content {
