@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("../database/init");
 const { validateRegistration, validateLogin } = require("../middleware/auth");
+const emailService = require("../services/emailService");
 
 const router = express.Router();
 
@@ -30,7 +31,7 @@ router.post("/register", validateRegistration, async (req, res) => {
     // Check if personnummer already exists
     const existingPersonnummer = await db.getQuery(
       "SELECT id FROM users WHERE personnummer = ?",
-      [personnummer]
+      [personnummer],
     );
     if (existingPersonnummer) {
       return res
@@ -53,7 +54,7 @@ router.post("/register", validateRegistration, async (req, res) => {
         phone,
         address,
         "member",
-      ]
+      ],
     );
 
     // Create membership (pending payment)
@@ -70,14 +71,14 @@ router.post("/register", validateRegistration, async (req, res) => {
         "active",
         "pending",
         600.0,
-      ]
+      ],
     );
 
     // Generate JWT token
     const token = jwt.sign(
       { userId: result.id, email, role: "member" },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.status(201).json({
@@ -91,6 +92,20 @@ router.post("/register", validateRegistration, async (req, res) => {
         role: "member",
       },
     });
+
+    // Send confirmation email (don't wait for it to complete)
+    emailService
+      .sendRegistrationConfirmation(email, {
+        first_name,
+        last_name,
+        email,
+        phone,
+        membership_start: startDate.toISOString().split("T")[0],
+        membership_end: endDate.toISOString().split("T")[0],
+      })
+      .catch((error) => {
+        console.error("Failed to send registration email:", error);
+      });
   } catch (error) {
     console.error("Registration error:", error);
     res.status(500).json({ error: "Registration failed" });
@@ -123,7 +138,7 @@ router.post("/login", validateLogin, async (req, res) => {
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.json({
@@ -143,44 +158,81 @@ router.post("/login", validateLogin, async (req, res) => {
   }
 });
 
-// Get current user profile
-router.get(
-  "/profile",
-  require("../middleware/auth").authenticateToken,
-  async (req, res) => {
-    try {
-      const user = await db.getUserById(req.user.id);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
+// Process payment (mock implementation)
+router.post("/payment", authenticateToken, async (req, res) => {
+  try {
+    const { membership_id, payment_method } = req.body;
+    const userId = req.user.id;
 
-      // Get membership info
-      const membership = await db.getQuery(
-        "SELECT * FROM memberships WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
-        [user.id]
-      );
+    // Verify membership belongs to user
+    const membership = await db.getQuery(
+      "SELECT * FROM memberships WHERE id = ? AND user_id = ?",
+      [membership_id, userId],
+    );
 
-      res.json({
-        user: {
-          id: user.id,
-          email: user.email,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          phone: user.phone,
-          address: user.address,
-          personnummer: user.personnummer,
-          role: user.role,
-          is_active: user.is_active,
-          created_at: user.created_at,
-        },
-        membership,
-      });
-    } catch (error) {
-      console.error("Profile fetch error:", error);
-      res.status(500).json({ error: "Failed to fetch profile" });
+    if (!membership) {
+      return res.status(404).json({ error: "Membership not found" });
     }
+
+    if (membership.payment_status === "paid") {
+      return res.status(400).json({ error: "Membership already paid" });
+    }
+
+    // Mock payment processing (in real implementation, integrate with Swish)
+    const transactionId = `mock_txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    // Update membership payment status
+    await db.runQuery(
+      "UPDATE memberships SET payment_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+      ["paid", membership_id],
+    );
+
+    // Create payment record
+    await db.runQuery(
+      "INSERT INTO payments (membership_id, amount, payment_method, transaction_id, status, payment_date) VALUES (?, ?, ?, ?, ?, ?)",
+      [
+        membership_id,
+        membership.amount_paid,
+        payment_method || "swish",
+        transactionId,
+        "completed",
+        new Date().toISOString(),
+      ],
+    );
+
+    // Get user info for email
+    const user = await db.getUserById(userId);
+
+    res.json({
+      message: "Payment processed successfully",
+      payment: {
+        transaction_id: transactionId,
+        amount: membership.amount_paid,
+        payment_method: payment_method || "swish",
+        status: "completed",
+      },
+    });
+
+    // Send payment confirmation email
+    emailService
+      .sendPaymentConfirmation(user.email, {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        amount: membership.amount_paid,
+        payment_method: payment_method || "swish",
+        transaction_id: transactionId,
+        payment_date: new Date().toISOString(),
+        membership_start: membership.start_date,
+        membership_end: membership.end_date,
+      })
+      .catch((error) => {
+        console.error("Failed to send payment confirmation email:", error);
+      });
+  } catch (error) {
+    console.error("Payment processing error:", error);
+    res.status(500).json({ error: "Payment processing failed" });
   }
-);
+});
 
 // Update profile
 router.put(
@@ -193,7 +245,7 @@ router.put(
 
       await db.runQuery(
         "UPDATE users SET first_name = ?, last_name = ?, phone = ?, address = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-        [first_name, last_name, phone, address, userId]
+        [first_name, last_name, phone, address, userId],
       );
 
       const updatedUser = await db.getUserById(userId);
@@ -213,7 +265,7 @@ router.put(
       console.error("Profile update error:", error);
       res.status(500).json({ error: "Failed to update profile" });
     }
-  }
+  },
 );
 
 module.exports = router;

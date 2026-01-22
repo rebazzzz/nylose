@@ -376,14 +376,17 @@ function bookSession(day, time, activity) {
 
 // Mock function for login
 function handleLoginClick() {
-  const modal = document.getElementById("login-modal");
-  modal.style.display = "flex";
-}
+  // Check if user is already logged in as admin
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
-// Close login modal
-function closeLoginModal() {
-  const modal = document.getElementById("login-modal");
-  modal.style.display = "none";
+  if (token && user && user.role === "admin") {
+    // Already logged in, go to dashboard
+    window.location.href = "admin-dashboard.html";
+  } else {
+    // Not logged in, go to login page
+    window.location.href = "admin.html";
+  }
 }
 
 // Initialize when page loads

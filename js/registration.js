@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const personnummerInput = document.getElementById("personnummer");
   const parentFields = document.querySelectorAll(".parent-field");
   const registerBtn = document.getElementById("register-btn");
-  const modal = document.getElementById("registration-modal");
+  const registrationForm = document.querySelector(".registration-form");
 
   if (personnummerInput) {
     const mask = "YYYYMMDD-XXXX";
@@ -87,27 +87,90 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Event listener for register button to show modal
-  if (registerBtn) {
-    registerBtn.addEventListener("click", function () {
-      if (modal) {
-        modal.style.display = "flex";
-      }
-    });
-  }
+  // Handle form submission
+  if (registrationForm && registerBtn) {
+    registrationForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-  // Function to close the modal
-  window.closeRegistrationModal = function () {
-    if (modal) {
-      modal.style.display = "none";
-    }
-  };
+      const formData = new FormData(registrationForm);
+      const registrationData = {
+        first_name: formData.get("firstname"),
+        last_name: formData.get("lastname"),
+        personnummer: formData.get("personnummer").replace(/[^0-9-]/g, ""),
+        email: formData.get("email"),
+        phone: formData.get("phone"),
+        address: formData.get("address"),
+        password: "temp_password_" + Date.now(), // Temporary password
+      };
 
-  // Close modal when clicking outside
-  if (modal) {
-    modal.addEventListener("click", function (e) {
-      if (e.target === modal) {
-        closeRegistrationModal();
+      // Disable button
+      registerBtn.disabled = true;
+      registerBtn.textContent = "Registrerar...";
+
+      try {
+        // Register user
+        const registerResponse = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(registrationData),
+        });
+
+        const registerResult = await registerResponse.json();
+
+        if (registerResponse.ok) {
+          // Get membership ID for payment
+          const membershipResponse = await fetch("/api/member/profile", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${registerResult.token}`,
+            },
+          });
+
+          if (membershipResponse.ok) {
+            const membershipData = await membershipResponse.json();
+            const membership = membershipData.membership;
+
+            // Process payment
+            const paymentResponse = await fetch("/api/auth/payment", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${registerResult.token}`,
+              },
+              body: JSON.stringify({
+                membership_id: membership.id,
+                payment_method: formData.get("payment-method"),
+              }),
+            });
+
+            if (paymentResponse.ok) {
+              // Success - redirect to success page or show success message
+              alert(
+                "Registrering och betalning genomförd! Kontrollera din e-post för bekräftelse.",
+              );
+              window.location.href = "index.html";
+            } else {
+              alert(
+                "Registrering lyckades men betalning misslyckades. Kontakta oss för hjälp.",
+              );
+            }
+          } else {
+            alert(
+              "Registrering lyckades men kunde inte hitta medlemskap. Kontakta oss för hjälp.",
+            );
+          }
+        } else {
+          alert("Registrering misslyckades: " + registerResult.error);
+        }
+      } catch (error) {
+        console.error("Registration error:", error);
+        alert("Ett fel uppstod. Försök igen senare.");
+      } finally {
+        // Re-enable button
+        registerBtn.disabled = false;
+        registerBtn.textContent = "Skicka anmälan";
       }
     });
   }
