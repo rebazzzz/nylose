@@ -2,8 +2,12 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("../database/init");
-const { validateRegistration, validateLogin } = require("../middleware/auth");
-const emailService = require("../services/emailService");
+const {
+  validateRegistration,
+  validateLogin,
+  authenticateToken,
+} = require("../middleware/auth");
+// const emailService = require("../services/emailService"); // Disabled for now
 
 const router = express.Router();
 
@@ -93,7 +97,8 @@ router.post("/register", validateRegistration, async (req, res) => {
       },
     });
 
-    // Send confirmation email (don't wait for it to complete)
+    // Send confirmation email (disabled for now - configure email credentials first)
+    /*
     emailService
       .sendRegistrationConfirmation(email, {
         first_name,
@@ -106,6 +111,7 @@ router.post("/register", validateRegistration, async (req, res) => {
       .catch((error) => {
         console.error("Failed to send registration email:", error);
       });
+    */
   } catch (error) {
     console.error("Registration error:", error);
     res.status(500).json({ error: "Registration failed" });
@@ -159,61 +165,65 @@ router.post("/login", validateLogin, async (req, res) => {
 });
 
 // Process payment (mock implementation)
-router.post("/payment", authenticateToken, async (req, res) => {
-  try {
-    const { membership_id, payment_method } = req.body;
-    const userId = req.user.id;
+router.post(
+  "/payment",
+  require("../middleware/auth").authenticateToken,
+  async (req, res) => {
+    try {
+      const { membership_id, payment_method } = req.body;
+      const userId = req.user.id;
 
-    // Verify membership belongs to user
-    const membership = await db.getQuery(
-      "SELECT * FROM memberships WHERE id = ? AND user_id = ?",
-      [membership_id, userId],
-    );
+      // Verify membership belongs to user
+      const membership = await db.getQuery(
+        "SELECT * FROM memberships WHERE id = ? AND user_id = ?",
+        [membership_id, userId],
+      );
 
-    if (!membership) {
-      return res.status(404).json({ error: "Membership not found" });
-    }
+      if (!membership) {
+        return res.status(404).json({ error: "Membership not found" });
+      }
 
-    if (membership.payment_status === "paid") {
-      return res.status(400).json({ error: "Membership already paid" });
-    }
+      if (membership.payment_status === "paid") {
+        return res.status(400).json({ error: "Membership already paid" });
+      }
 
-    // Mock payment processing (in real implementation, integrate with Swish)
-    const transactionId = `mock_txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      // Mock payment processing (in real implementation, integrate with Swish)
+      const transactionId = `mock_txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // Update membership payment status
-    await db.runQuery(
-      "UPDATE memberships SET payment_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-      ["paid", membership_id],
-    );
+      // Update membership payment status
+      await db.runQuery(
+        "UPDATE memberships SET payment_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+        ["paid", membership_id],
+      );
 
-    // Create payment record
-    await db.runQuery(
-      "INSERT INTO payments (membership_id, amount, payment_method, transaction_id, status, payment_date) VALUES (?, ?, ?, ?, ?, ?)",
-      [
-        membership_id,
-        membership.amount_paid,
-        payment_method || "swish",
-        transactionId,
-        "completed",
-        new Date().toISOString(),
-      ],
-    );
+      // Create payment record
+      await db.runQuery(
+        "INSERT INTO payments (membership_id, amount, payment_method, transaction_id, status, payment_date) VALUES (?, ?, ?, ?, ?, ?)",
+        [
+          membership_id,
+          membership.amount_paid,
+          payment_method || "swish",
+          transactionId,
+          "completed",
+          new Date().toISOString(),
+        ],
+      );
 
-    // Get user info for email
-    const user = await db.getUserById(userId);
+      // Get user info for email
+      const user = await db.getUserById(userId);
 
-    res.json({
-      message: "Payment processed successfully",
-      payment: {
-        transaction_id: transactionId,
-        amount: membership.amount_paid,
-        payment_method: payment_method || "swish",
-        status: "completed",
-      },
-    });
+      res.json({
+        message: "Payment processed successfully",
+        payment: {
+          transaction_id: transactionId,
+          amount: membership.amount_paid,
+          payment_method: payment_method || "swish",
+          status: "completed",
+        },
+      });
 
-    // Send payment confirmation email
+      // Send payment confirmation email (disabled for now - configure email credentials first)
+      /*
     emailService
       .sendPaymentConfirmation(user.email, {
         first_name: user.first_name,
@@ -228,11 +238,13 @@ router.post("/payment", authenticateToken, async (req, res) => {
       .catch((error) => {
         console.error("Failed to send payment confirmation email:", error);
       });
-  } catch (error) {
-    console.error("Payment processing error:", error);
-    res.status(500).json({ error: "Payment processing failed" });
-  }
-});
+    */
+    } catch (error) {
+      console.error("Payment processing error:", error);
+      res.status(500).json({ error: "Payment processing failed" });
+    }
+  },
+);
 
 // Update profile
 router.put(

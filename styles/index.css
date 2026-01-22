@@ -193,6 +193,13 @@
 .sport-title {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
+}
+.age-groups {
+  margin-top: 0.5rem;
+}
+.age-groups small {
+  color: #666;
+  font-style: italic;
 } /* Schedule Section */
 .schedule {
   background-color: var(--background);

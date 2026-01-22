@@ -35,52 +35,52 @@
             </div>
 
             <div class="dashboard-grid">
-                <div class="dashboard-card">
+                <div class="dashboard-card" data-section="users">
                     <div class="card-icon">
                         <i class="fas fa-users"></i>
                     </div>
                     <div class="card-content">
                         <h3>Medlemmar</h3>
-                        <p>Hantera medlemmar och registreringar</p>
+                        <p id="members-count">Laddar...</p>
                     </div>
                     <div class="card-action">
-                        <a href="#" class="btn">
+                        <button class="btn" onclick="showSection('users')">
                             <i class="fas fa-arrow-right"></i>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
-                <div class="dashboard-card">
+                <div class="dashboard-card" data-section="schedules">
                     <div class="card-icon">
                         <i class="fas fa-calendar-alt"></i>
                     </div>
                     <div class="card-content">
                         <h3>Schema</h3>
-                        <p>Hantera träningsscheman och tider</p>
+                        <p id="schedules-count">Laddar...</p>
                     </div>
                     <div class="card-action">
-                        <a href="#" class="btn">
+                        <button class="btn" onclick="showSection('schedules')">
                             <i class="fas fa-arrow-right"></i>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
-                <div class="dashboard-card">
+                <div class="dashboard-card" data-section="sports">
                     <div class="card-icon">
                         <i class="fas fa-dumbbell"></i>
                     </div>
                     <div class="card-content">
                         <h3>Sporter</h3>
-                        <p>Hantera tillgängliga sporter</p>
+                        <p id="sports-count">Laddar...</p>
                     </div>
                     <div class="card-action">
-                        <a href="#" class="btn">
+                        <button class="btn" onclick="showSection('sports')">
                             <i class="fas fa-arrow-right"></i>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
-                <div class="dashboard-card">
+                <div class="dashboard-card" data-section="statistics">
                     <div class="card-icon">
                         <i class="fas fa-chart-bar"></i>
                     </div>
@@ -89,13 +89,304 @@
                         <p>Visa statistik och rapporter</p>
                     </div>
                     <div class="card-action">
-                        <a href="#" class="btn">
+                        <button class="btn" onclick="showSection('statistics')">
                             <i class="fas fa-arrow-right"></i>
-                        </a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Content Sections -->
+            <div id="content-sections" class="content-sections">
+                <!-- Users Section -->
+                <div id="users-section" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Medlemmar</h2>
+                        <button class="btn btn-secondary" onclick="hideAllSections()">
+                            <i class="fas fa-arrow-left"></i> Tillbaka
+                        </button>
+                    </div>
+                    <div class="section-content">
+                        <div class="data-table">
+                            <table id="users-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Namn</th>
+                                        <th>E-post</th>
+                                        <th>Telefon</th>
+                                        <th>Medlemskap</th>
+                                        <th>Status</th>
+                                        <th>Åtgärder</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-tbody">
+                                    <tr>
+                                        <td colspan="7">Laddar medlemmar...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedules Section -->
+                <div id="schedules-section" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Schema</h2>
+                        <button class="btn btn-secondary" onclick="hideAllSections()">
+                            <i class="fas fa-arrow-left"></i> Tillbaka
+                        </button>
+                        <button class="btn btn-primary" onclick="showAddScheduleModal()">
+                            <i class="fas fa-plus"></i> Lägg till schema
+                        </button>
+                    </div>
+                    <div class="section-content">
+                        <div class="data-table">
+                            <table id="schedules-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Sport</th>
+                                        <th>Dag</th>
+                                        <th>Tid</th>
+                                        <th>Åldersgrupp</th>
+                                        <th>Max deltagare</th>
+                                        <th>Åtgärder</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="schedules-tbody">
+                                    <tr>
+                                        <td colspan="7">Laddar schema...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sports Section -->
+                <div id="sports-section" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Sporter</h2>
+                        <button class="btn btn-secondary" onclick="hideAllSections()">
+                            <i class="fas fa-arrow-left"></i> Tillbaka
+                        </button>
+                        <button class="btn btn-primary" onclick="showAddSportModal()">
+                            <i class="fas fa-plus"></i> Lägg till sport
+                        </button>
+                    </div>
+                    <div class="section-content">
+                        <div class="data-table">
+                            <table id="sports-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Namn</th>
+                                        <th>Beskrivning</th>
+                                        <th>Åldersgrupper</th>
+                                        <th>Åtgärder</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sports-tbody">
+                                    <tr>
+                                        <td colspan="5">Laddar sporter...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div id="statistics-section" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Statistik</h2>
+                        <button class="btn btn-secondary" onclick="hideAllSections()">
+                            <i class="fas fa-arrow-left"></i> Tillbaka
+                        </button>
+                    </div>
+                    <div class="section-content">
+                        <div id="statistics-content">
+                            Laddar statistik...
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- Modals -->
+    <!-- Add Sport Modal -->
+    <div id="add-sport-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Lägg till sport</h3>
+                <span class="modal-close" onclick="closeModal('add-sport-modal')">&times;</span>
+            </div>
+            <form id="add-sport-form">
+                <div class="form-group">
+                    <label for="sport-name">Namn:</label>
+                    <input type="text" id="sport-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="sport-description">Beskrivning:</label>
+                    <textarea id="sport-description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Åldersgrupper:</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" value="barn"> Barn (6-12 år)</label>
+                        <label><input type="checkbox" value="ungdom"> Ungdom (13-17 år)</label>
+                        <label><input type="checkbox" value="vuxen"> Vuxen (18+ år)</label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Spara</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('add-sport-modal')">Avbryt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Schedule Modal -->
+    <div id="add-schedule-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Lägg till schema</h3>
+                <span class="modal-close" onclick="closeModal('add-schedule-modal')">&times;</span>
+            </div>
+            <form id="add-schedule-form">
+                <div class="form-group">
+                    <label for="schedule-sport">Sport:</label>
+                    <select id="schedule-sport" required>
+                        <option value="">Välj sport...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="schedule-day">Dag:</label>
+                    <select id="schedule-day" required>
+                        <option value="Måndag">Måndag</option>
+                        <option value="Tisdag">Tisdag</option>
+                        <option value="Onsdag">Onsdag</option>
+                        <option value="Torsdag">Torsdag</option>
+                        <option value="Fredag">Fredag</option>
+                        <option value="Lördag">Lördag</option>
+                        <option value="Söndag">Söndag</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="schedule-time">Tid:</label>
+                    <input type="time" id="schedule-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="schedule-age-group">Åldersgrupp:</label>
+                    <select id="schedule-age-group" required>
+                        <option value="barn">Barn (6-12 år)</option>
+                        <option value="ungdom">Ungdom (13-17 år)</option>
+                        <option value="vuxen">Vuxen (18+ år)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="schedule-max-participants">Max antal deltagare:</label>
+                    <input type="number" id="schedule-max-participants" min="1" max="50" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Spara</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('add-schedule-modal')">Avbryt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Sport Modal -->
+    <div id="edit-sport-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Redigera sport</h3>
+                <span class="modal-close" onclick="closeModal('edit-sport-modal')">&times;</span>
+            </div>
+            <form id="edit-sport-form">
+                <input type="hidden" id="edit-sport-id">
+                <div class="form-group">
+                    <label for="edit-sport-name">Namn:</label>
+                    <input type="text" id="edit-sport-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-sport-description">Beskrivning:</label>
+                    <textarea id="edit-sport-description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Åldersgrupper:</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" value="barn" id="edit-age-barn"> Barn (6-12 år)</label>
+                        <label><input type="checkbox" value="ungdom" id="edit-age-ungdom"> Ungdom (13-17 år)</label>
+                        <label><input type="checkbox" value="vuxen" id="edit-age-vuxen"> Vuxen (18+ år)</label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Uppdatera</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('edit-sport-modal')">Avbryt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Schedule Modal -->
+    <div id="edit-schedule-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Redigera schema</h3>
+                <span class="modal-close" onclick="closeModal('edit-schedule-modal')">&times;</span>
+            </div>
+            <form id="edit-schedule-form">
+                <input type="hidden" id="edit-schedule-id">
+                <div class="form-group">
+                    <label for="edit-schedule-sport">Sport:</label>
+                    <select id="edit-schedule-sport" required>
+                        <option value="">Välj sport...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-schedule-day">Dag:</label>
+                    <select id="edit-schedule-day" required>
+                        <option value="Måndag">Måndag</option>
+                        <option value="Tisdag">Tisdag</option>
+                        <option value="Onsdag">Onsdag</option>
+                        <option value="Torsdag">Torsdag</option>
+                        <option value="Fredag">Fredag</option>
+                        <option value="Lördag">Lördag</option>
+                        <option value="Söndag">Söndag</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-schedule-time">Tid:</label>
+                    <input type="time" id="edit-schedule-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-schedule-age-group">Åldersgrupp:</label>
+                    <select id="edit-schedule-age-group" required>
+                        <option value="barn">Barn (6-12 år)</option>
+                        <option value="ungdom">Ungdom (13-17 år)</option>
+                        <option value="vuxen">Vuxen (18+ år)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-schedule-max-participants">Max antal deltagare:</label>
+                    <input type="number" id="edit-schedule-max-participants" min="1" max="50" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Uppdatera</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('edit-schedule-modal')">Avbryt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
     </section>
 
     <!-- Footer Placeholder -->

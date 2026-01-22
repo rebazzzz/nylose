@@ -9,7 +9,15 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Security middleware
-app.use(helmet());
+if (process.env.NODE_ENV === "production") {
+  app.use(helmet());
+} else {
+  app.use(
+    helmet({
+      contentSecurityPolicy: false, // Disable CSP in development
+    }),
+  );
+}
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || [
@@ -17,7 +25,7 @@ app.use(
       "http://localhost:8000",
     ],
     credentials: true,
-  })
+  }),
 );
 
 // Rate limiting
@@ -33,6 +41,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Static files for uploads (if needed)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Remove static file serving - frontend should be served by the frontend server only
+// app.use(express.static(path.join(__dirname, "..")));
 
 // Import routes
 const authRoutes = require("./routes/auth");

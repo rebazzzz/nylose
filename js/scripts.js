@@ -128,6 +128,49 @@ function getMockSportsData() {
   ];
 }
 
+// Populate sports grid
+function populateSportsGrid() {
+  const sportsGrid = document.getElementById("sports-grid");
+  if (!sportsGrid) return;
+
+  sportsGrid.innerHTML = "";
+
+  if (!sportsData || sportsData.length === 0) {
+    sportsGrid.innerHTML = "<p>Inga sporter tillgängliga för tillfället.</p>";
+    return;
+  }
+
+  sportsData.forEach((sport) => {
+    const sportCard = document.createElement("div");
+    sportCard.className = "sport-card";
+
+    // Get appropriate image based on sport name
+    let imageSrc = "images/placeholder.jpg"; // Default placeholder
+    if (sport.name.toLowerCase().includes("brottning")) {
+      imageSrc = "images/brottning.jpg";
+    } else if (sport.name.toLowerCase().includes("wresfit")) {
+      imageSrc = "images/Wresfit.jpg";
+    } else if (sport.name.toLowerCase().includes("girls only")) {
+      imageSrc = "images/girlsonly.jpeg";
+    }
+
+    sportCard.innerHTML = `
+      <div class="sport-image">
+        <img src="${imageSrc}" alt="${sport.name} logo" loading="lazy">
+      </div>
+      <div class="sport-content">
+        <h3 class="sport-title">${sport.name}</h3>
+        <p>${sport.description}</p>
+        <div class="age-groups">
+          <small>Åldersgrupper: ${sport.age_groups.join(", ")}</small>
+        </div>
+      </div>
+    `;
+
+    sportsGrid.appendChild(sportCard);
+  });
+}
+
 // Populate weekly schedule cards
 function populateWeeklyScheduleCards(filterKey = null) {
   const scheduleContainer = document.getElementById("weekly-schedule-cards");
@@ -395,20 +438,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   await loadScheduleData();
   await loadSportsData();
 
-  // Mock function for form submission
-  const contactForm = document.getElementById("contact-form");
-  if (contactForm) {
-    contactForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      alert("Tack för ditt meddelande! Vi återkommer så snart som möjligt.");
-      this.reset();
-    });
-  }
+  // Populate sports grid
+  populateSportsGrid();
 
-  // Check if we are on a sport-specific page
-  const urlParams = new URLSearchParams(window.location.search);
-  const sportFilter = urlParams.get("sport");
+  // Populate schedule if on index page
   if (document.getElementById("weekly-schedule-cards")) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sportFilter = urlParams.get("sport");
     populateWeeklyScheduleCards(sportFilter);
   }
 

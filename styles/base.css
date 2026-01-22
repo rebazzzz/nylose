@@ -202,7 +202,7 @@ footer {
   text-decoration: none;
 }
 
-#telnr span{
+#telnr span {
   color: var(--primary);
 }
 
@@ -295,4 +295,65 @@ footer {
 
 .modal-close:hover {
   color: var(--secondary);
+}
+
+/* Modal Form Styles */
+.modal-content .form-group {
+  margin-bottom: var(--spacing-md);
+  text-align: left;
+}
+
+.modal-content .form-group label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.modal-content .form-group input {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--background);
+  color: var(--text);
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.modal-content .form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.modal-content .btn-primary {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: var(--spacing-md);
+}
+
+.modal-content .btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.modal-links {
+  text-align: center;
+}
+
+.modal-links a {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.modal-links a:hover {
+  text-decoration: underline;
 }

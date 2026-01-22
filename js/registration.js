@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
         email: formData.get("email"),
         phone: formData.get("phone"),
         address: formData.get("address"),
-        password: "temp_password_" + Date.now(), // Temporary password
+        password: formData.get("password"),
       };
 
       // Disable button
@@ -109,41 +109,50 @@ document.addEventListener("DOMContentLoaded", function () {
 
       try {
         // Register user
-        const registerResponse = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const registerResponse = await fetch(
+          "http://localhost:3001/api/auth/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(registrationData),
           },
-          body: JSON.stringify(registrationData),
-        });
+        );
 
         const registerResult = await registerResponse.json();
 
         if (registerResponse.ok) {
           // Get membership ID for payment
-          const membershipResponse = await fetch("/api/member/profile", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${registerResult.token}`,
+          const membershipResponse = await fetch(
+            "http://localhost:3001/api/member/profile",
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${registerResult.token}`,
+              },
             },
-          });
+          );
 
           if (membershipResponse.ok) {
             const membershipData = await membershipResponse.json();
             const membership = membershipData.membership;
 
             // Process payment
-            const paymentResponse = await fetch("/api/auth/payment", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${registerResult.token}`,
+            const paymentResponse = await fetch(
+              "http://localhost:3001/api/auth/payment",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${registerResult.token}`,
+                },
+                body: JSON.stringify({
+                  membership_id: membership.id,
+                  payment_method: formData.get("payment-method"),
+                }),
               },
-              body: JSON.stringify({
-                membership_id: membership.id,
-                payment_method: formData.get("payment-method"),
-              }),
-            });
+            );
 
             if (paymentResponse.ok) {
               // Success - redirect to success page or show success message
