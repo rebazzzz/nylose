@@ -122,9 +122,21 @@ function getMockScheduleData() {
 
 function getMockSportsData() {
   return [
-    { name: "Brottning", description: "Greco-Roman och Freestyle brottning" },
-    { name: "Wresfit", description: "Funktionell styrketräning" },
-    { name: "Girls Only", description: "Boxning för tjejer" },
+    {
+      name: "Brottning",
+      description: "Greco-Roman och Freestyle brottning",
+      age_groups: ["Barn", "Ungdom", "Vuxna"],
+    },
+    {
+      name: "Wresfit",
+      description: "Funktionell styrketräning",
+      age_groups: ["Ungdom", "Vuxna"],
+    },
+    {
+      name: "Girls Only",
+      description: "Boxning för tjejer",
+      age_groups: ["Ungdom", "Vuxna"],
+    },
   ];
 }
 
@@ -162,7 +174,7 @@ function populateSportsGrid() {
         <h3 class="sport-title">${sport.name}</h3>
         <p>${sport.description}</p>
         <div class="age-groups">
-          <small>Åldersgrupper: ${sport.age_groups.join(", ")}</small>
+          <small>Åldersgrupper: ${sport.age_groups && Array.isArray(sport.age_groups) ? sport.age_groups.join(", ") : "Alla åldrar"}</small>
         </div>
       </div>
     `;
