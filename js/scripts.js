@@ -173,9 +173,6 @@ function populateSportsGrid() {
       <div class="sport-content">
         <h3 class="sport-title">${sport.name}</h3>
         <p>${sport.description}</p>
-        <div class="age-groups">
-          <small>Åldersgrupper: ${sport.age_groups && Array.isArray(sport.age_groups) ? sport.age_groups.join(", ") : "Alla åldrar"}</small>
-        </div>
       </div>
     `;
 
