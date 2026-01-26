@@ -5,6 +5,53 @@ document.addEventListener("DOMContentLoaded", function () {
   const registerBtn = document.getElementById("register-btn");
   const registrationForm = document.querySelector(".registration-form");
 
+  // Notification functions
+  function showNotification(message, type = "info", title = "Meddelande") {
+    const modal = document.getElementById("notification-modal");
+    const titleEl = document.getElementById("notification-title");
+    const messageEl = document.getElementById("notification-message");
+    const iconEl = document.getElementById("notification-icon");
+
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+
+    iconEl.className = "notification-icon";
+    let iconClass = "fas fa-info-circle";
+    switch (type) {
+      case "success":
+        iconClass = "fas fa-check-circle";
+        iconEl.classList.add("success");
+        break;
+      case "error":
+        iconClass = "fas fa-exclamation-triangle";
+        iconEl.classList.add("error");
+        break;
+      case "warning":
+        iconClass = "fas fa-exclamation-circle";
+        iconEl.classList.add("warning");
+        break;
+      default:
+        iconEl.classList.add("info");
+    }
+    iconEl.innerHTML = `<i class="${iconClass}"></i>`;
+
+    document.getElementById("notification-confirm-btn").onclick =
+      closeNotificationModal;
+    modal.style.display = "block";
+  }
+
+  function closeNotificationModal() {
+    document.getElementById("notification-modal").style.display = "none";
+  }
+
+  function showSuccess(message, title = "Lyckades") {
+    showNotification(message, "success", title);
+  }
+
+  function showError(message, title = "Fel") {
+    showNotification(message, "error", title);
+  }
+
   if (personnummerInput) {
     const mask = "YYYYMMDD-XXXX";
     personnummerInput.value = mask;
@@ -156,26 +203,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (paymentResponse.ok) {
               // Success - redirect to success page or show success message
-              alert(
+              showSuccess(
                 "Registrering och betalning genomförd! Kontrollera din e-post för bekräftelse.",
+                "Registrering lyckades",
               );
               window.location.href = "index.html";
             } else {
-              alert(
+              showError(
                 "Registrering lyckades men betalning misslyckades. Kontakta oss för hjälp.",
+                "Betalningsfel",
               );
             }
           } else {
-            alert(
+            showError(
               "Registrering lyckades men kunde inte hitta medlemskap. Kontakta oss för hjälp.",
+              "Medlemskapsfel",
             );
           }
         } else {
-          alert("Registrering misslyckades: " + registerResult.error);
+          showError(
+            "Registrering misslyckades: " + registerResult.error,
+            "Registreringsfel",
+          );
         }
       } catch (error) {
         console.error("Registration error:", error);
-        alert("Ett fel uppstod. Försök igen senare.");
+        showError("Ett fel uppstod. Försök igen senare.", "Fel");
       } finally {
         // Re-enable button
         registerBtn.disabled = false;

@@ -405,7 +405,7 @@ async function toggleUserStatus(userId, newStatus) {
     loadDashboardCounts();
   } catch (error) {
     console.error("Error updating user status:", error);
-    alert("Kunde inte uppdatera användarstatus");
+    showError("Kunde inte uppdatera användarstatus");
   }
 }
 
@@ -413,53 +413,67 @@ async function toggleUserStatus(userId, newStatus) {
  * Delete sport
  */
 async function deleteSport(sportId) {
-  if (!confirm("Är du säker på att du vill ta bort denna sport?")) return;
+  showConfirm(
+    "Är du säker på att du vill ta bort denna sport?",
+    "Bekräfta borttagning",
+    async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/admin/sports/${sportId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
 
-  try {
-    const response = await fetch(
-      `http://localhost:3001/api/admin/sports/${sportId}`,
-      {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      },
-    );
+        if (!response.ok) throw new Error("Failed to delete sport");
 
-    if (!response.ok) throw new Error("Failed to delete sport");
-
-    // Reload sports
-    loadSports();
-    loadDashboardCounts();
-    loadSportsForSelect();
-  } catch (error) {
-    console.error("Error deleting sport:", error);
-    alert("Kunde inte ta bort sport");
-  }
+        // Reload sports
+        loadSports();
+        loadDashboardCounts();
+        loadSportsForSelect();
+        showSuccess("Sporten har tagits bort");
+      } catch (error) {
+        console.error("Error deleting sport:", error);
+        showError("Kunde inte ta bort sport");
+      }
+    },
+  );
 }
 
 /**
  * Delete schedule
  */
 async function deleteSchedule(scheduleId) {
-  if (!confirm("Är du säker på att du vill ta bort detta schema?")) return;
+  showConfirm(
+    "Är du säker på att du vill ta bort detta schema?",
+    "Bekräfta borttagning",
+    async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/admin/schedules/${scheduleId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
 
-  try {
-    const response = await fetch(
-      `http://localhost:3001/api/admin/schedules/${scheduleId}`,
-      {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      },
-    );
+        if (!response.ok) throw new Error("Failed to delete schedule");
 
-    if (!response.ok) throw new Error("Failed to delete schedule");
-
-    // Reload schedules
-    loadSchedules();
-    loadDashboardCounts();
-  } catch (error) {
-    console.error("Error deleting schedule:", error);
-    alert("Kunde inte ta bort schema");
-  }
+        // Reload schedules
+        loadSchedules();
+        loadDashboardCounts();
+        showSuccess("Schemat har tagits bort");
+      } catch (error) {
+        console.error("Error deleting schedule:", error);
+        showError("Kunde inte ta bort schema");
+      }
+    },
+  );
 }
 
 /**
@@ -503,7 +517,7 @@ async function editSport(sportId) {
     document.getElementById("edit-sport-modal").style.display = "block";
   } catch (error) {
     console.error("Error loading sport for edit:", error);
-    alert("Kunde inte ladda sport för redigering");
+    showError("Kunde inte ladda sport för redigering");
   }
 }
 
@@ -538,7 +552,7 @@ async function editSchedule(scheduleId) {
     document.getElementById("edit-schedule-modal").style.display = "block";
   } catch (error) {
     console.error("Error loading schedule for edit:", error);
-    alert("Kunde inte ladda schema för redigering");
+    showError("Kunde inte ladda schema för redigering");
   }
 }
 
@@ -547,6 +561,121 @@ async function editSchedule(scheduleId) {
  */
 function closeModal(modalId) {
   document.getElementById(modalId).style.display = "none";
+}
+
+/**
+ * Show notification modal
+ */
+function showNotification(
+  message,
+  type = "info",
+  title = "Meddelande",
+  confirmCallback = null,
+  cancelCallback = null,
+) {
+  const modal = document.getElementById("notification-modal");
+  const titleEl = document.getElementById("notification-title");
+  const messageEl = document.getElementById("notification-message");
+  const iconEl = document.getElementById("notification-icon");
+  const confirmBtn = document.getElementById("notification-confirm-btn");
+  const cancelBtn = document.getElementById("notification-cancel-btn");
+
+  // Set title
+  titleEl.textContent = title;
+
+  // Set message
+  messageEl.textContent = message;
+
+  // Set icon and type
+  iconEl.className = "notification-icon";
+  let iconClass = "fas fa-info-circle";
+  switch (type) {
+    case "success":
+      iconClass = "fas fa-check-circle";
+      iconEl.classList.add("success");
+      break;
+    case "error":
+      iconClass = "fas fa-exclamation-triangle";
+      iconEl.classList.add("error");
+      break;
+    case "warning":
+      iconClass = "fas fa-exclamation-circle";
+      iconEl.classList.add("warning");
+      break;
+    default:
+      iconEl.classList.add("info");
+  }
+  iconEl.innerHTML = `<i class="${iconClass}"></i>`;
+
+  // Handle confirm/cancel buttons
+  if (confirmCallback || cancelCallback) {
+    cancelBtn.style.display = "inline-block";
+    confirmBtn.textContent = "Ja";
+    cancelBtn.textContent = "Avbryt";
+
+    // Remove previous event listeners
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    const newCancelBtn = cancelBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+    // Add new event listeners
+    newConfirmBtn.addEventListener("click", () => {
+      closeNotificationModal();
+      if (confirmCallback) confirmCallback();
+    });
+    newCancelBtn.addEventListener("click", () => {
+      closeNotificationModal();
+      if (cancelCallback) cancelCallback();
+    });
+  } else {
+    cancelBtn.style.display = "none";
+    confirmBtn.textContent = "OK";
+    confirmBtn.onclick = closeNotificationModal;
+  }
+
+  // Show modal
+  modal.style.display = "block";
+}
+
+/**
+ * Close notification modal
+ */
+function closeNotificationModal() {
+  document.getElementById("notification-modal").style.display = "none";
+}
+
+/**
+ * Show success notification
+ */
+function showSuccess(message, title = "Lyckades") {
+  showNotification(message, "success", title);
+}
+
+/**
+ * Show error notification
+ */
+function showError(message, title = "Fel") {
+  showNotification(message, "error", title);
+}
+
+/**
+ * Show warning notification
+ */
+function showWarning(message, title = "Varning") {
+  showNotification(message, "warning", title);
+}
+
+/**
+ * Show confirmation dialog
+ */
+function showConfirm(
+  message,
+  title = "Bekräfta",
+  confirmCallback,
+  cancelCallback = null,
+) {
+  showNotification(message, "warning", title, confirmCallback, cancelCallback);
 }
 
 /**
@@ -587,9 +716,10 @@ function initializeForms() {
         loadSports();
         loadDashboardCounts();
         loadSportsForSelect();
+        showSuccess("Sporten har lagts till");
       } catch (error) {
         console.error("Error adding sport:", error);
-        alert("Kunde inte lägga till sport");
+        showError("Kunde inte lägga till sport");
       }
     });
 
@@ -626,9 +756,10 @@ function initializeForms() {
         this.reset();
         loadSchedules();
         loadDashboardCounts();
+        showSuccess("Schemat har lagts till");
       } catch (error) {
         console.error("Error adding schedule:", error);
-        alert("Kunde inte lägga till schema");
+        showError("Kunde inte lägga till schema");
       }
     });
 
@@ -675,9 +806,10 @@ function initializeForms() {
         loadSports();
         loadDashboardCounts();
         loadSportsForSelect();
+        showSuccess("Sporten har uppdaterats");
       } catch (error) {
         console.error("Error updating sport:", error);
-        alert("Kunde inte uppdatera sport");
+        showError("Kunde inte uppdatera sport");
       }
     });
 
@@ -717,6 +849,7 @@ function initializeForms() {
         this.reset();
         loadSchedules();
         loadDashboardCounts();
+        showSuccess("Schemat har uppdaterats");
       } catch (error) {
         console.error("Error updating schedule:", error);
         alert("Kunde inte uppdatera schema");

@@ -387,6 +387,30 @@
     </div>
     </section>
 
+    <!-- Notification Modal -->
+    <div id="notification-modal" class="modal" style="display: none;">
+        <div class="modal-content notification-modal">
+            <div class="modal-header">
+                <h3 id="notification-title">Meddelande</h3>
+                <span class="modal-close" onclick="closeNotificationModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="notification-icon" id="notification-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="notification-message" id="notification-message">
+                    Meddelande här
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="notification-confirm-btn" class="btn btn-primary"
+                    onclick="closeNotificationModal()">OK</button>
+                <button id="notification-cancel-btn" class="btn btn-secondary" onclick="closeNotificationModal()"
+                    style="display: none;">Avbryt</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer Placeholder -->
     <div id="footer-placeholder"></div>
 
