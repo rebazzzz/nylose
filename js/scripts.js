@@ -125,17 +125,14 @@ function getMockSportsData() {
     {
       name: "Brottning",
       description: "Greco-Roman och Freestyle brottning",
-      age_groups: ["Barn", "Ungdom", "Vuxna"],
     },
     {
       name: "Wresfit",
       description: "Funktionell styrketräning",
-      age_groups: ["Ungdom", "Vuxna"],
     },
     {
       name: "Girls Only",
       description: "Boxning för tjejer",
-      age_groups: ["Ungdom", "Vuxna"],
     },
   ];
 }
