@@ -21,6 +21,7 @@ class Database {
   async initDatabase() {
     try {
       await this.createTables();
+      await this.runMigrations();
       await this.seedInitialData();
       console.log("Database initialized successfully");
     } catch (error) {
@@ -53,6 +54,7 @@ class Database {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           description TEXT,
+          image_path TEXT, -- Path to sport image
           age_groups TEXT, -- JSON array of age groups
           is_active BOOLEAN DEFAULT 1,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -122,10 +124,47 @@ class Database {
           } else {
             completed++;
             if (completed === total) {
-              resolve();
+              // Run migrations after all tables are created
+              this.runMigrations()
+                .then(() => {
+                  resolve();
+                })
+                .catch(reject);
             }
           }
         });
+      });
+    });
+  }
+
+  runMigrations() {
+    return new Promise((resolve, reject) => {
+      // Check if image_path column exists in sports table, add it if not
+      this.db.all("PRAGMA table_info(sports)", (err, columns) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        const hasImagePath = columns.some((col) => col.name === "image_path");
+        if (!hasImagePath) {
+          console.log("Adding image_path column to sports table...");
+          this.db.run(
+            "ALTER TABLE sports ADD COLUMN image_path TEXT",
+            (err) => {
+              if (err) {
+                reject(err);
+              } else {
+                console.log(
+                  "Successfully added image_path column to sports table",
+                );
+                resolve();
+              }
+            },
+          );
+        } else {
+          resolve();
+        }
       });
     });
   }
@@ -134,7 +173,7 @@ class Database {
     try {
       // Check if we already have data by counting users
       const userCount = await this.getQuery(
-        "SELECT COUNT(*) as count FROM users"
+        "SELECT COUNT(*) as count FROM users",
       );
       if (userCount.count > 0) {
         console.log("Initial data already exists, skipping seed");
@@ -145,7 +184,7 @@ class Database {
       const adminPassword = await bcrypt.hash("admin123", 10);
       await this.runQuery(
         "INSERT INTO users (email, password_hash, first_name, last_name, role) VALUES (?, ?, ?, ?, ?)",
-        ["admin@nylose.se", adminPassword, "Admin", "User", "admin"]
+        ["admin@nylose.se", adminPassword, "Admin", "User", "admin"],
       );
 
       // Seed initial sports (only if they don't exist)
@@ -170,12 +209,12 @@ class Database {
       for (const sport of sports) {
         const existingSport = await this.getQuery(
           "SELECT id FROM sports WHERE name = ?",
-          [sport.name]
+          [sport.name],
         );
         if (!existingSport) {
           await this.runQuery(
             "INSERT INTO sports (name, description, age_groups) VALUES (?, ?, ?)",
-            [sport.name, sport.description, sport.age_groups]
+            [sport.name, sport.description, sport.age_groups],
           );
         }
       }
@@ -257,13 +296,13 @@ class Database {
       for (const session of scheduleData) {
         const sport = await this.getQuery(
           "SELECT id FROM sports WHERE name = ?",
-          [session.sport_name]
+          [session.sport_name],
         );
         if (sport) {
           // Check if schedule already exists
           const existingSchedule = await this.getQuery(
             "SELECT id FROM schedules WHERE sport_id = ? AND day_of_week = ? AND start_time = ? AND age_group = ?",
-            [sport.id, session.day, session.start, session.age_group]
+            [sport.id, session.day, session.start, session.age_group],
           );
           if (!existingSchedule) {
             await this.runQuery(
@@ -274,7 +313,7 @@ class Database {
                 session.start,
                 session.end,
                 session.age_group,
-              ]
+              ],
             );
           }
         }
@@ -334,7 +373,7 @@ class Database {
   async getUserById(id) {
     return this.getQuery(
       "SELECT id, email, first_name, last_name, phone, address, personnummer, role, is_active, created_at FROM users WHERE id = ?",
-      [id]
+      [id],
     );
   }
 

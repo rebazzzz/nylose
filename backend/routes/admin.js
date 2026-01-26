@@ -1,4 +1,6 @@
 const express = require("express");
+const multer = require("multer");
+const path = require("path");
 const db = require("../database/init");
 const {
   authenticateToken,
@@ -8,6 +10,31 @@ const {
 } = require("../middleware/auth");
 
 const router = express.Router();
+
+// Configure multer for image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../../images"));
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "sport-" + uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: function (req, file, cb) {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed"));
+    }
+  },
+});
 
 // Apply authentication and admin check to all routes
 router.use(authenticateToken);
@@ -34,65 +61,88 @@ router.get("/sports", async (req, res) => {
 });
 
 // Create new sport
-router.post("/sports", validateSport, async (req, res) => {
-  try {
-    const { name, description, age_groups } = req.body;
+router.post(
+  "/sports",
+  upload.single("image"),
+  validateSport,
+  async (req, res) => {
+    try {
+      const { name, description, age_groups } = req.body;
+      const image_path = req.file ? req.file.filename : null;
 
-    const result = await db.runQuery(
-      "INSERT INTO sports (name, description, age_groups) VALUES (?, ?, ?)",
-      [name, description, JSON.stringify(age_groups)]
-    );
+      const result = await db.runQuery(
+        "INSERT INTO sports (name, description, image_path, age_groups) VALUES (?, ?, ?, ?)",
+        [name, description, image_path, JSON.stringify(age_groups)],
+      );
 
-    res.status(201).json({
-      message: "Sport created successfully",
-      sport: {
-        id: result.id,
-        name,
-        description,
-        age_groups,
-        is_active: true,
-      },
-    });
-  } catch (error) {
-    console.error("Error creating sport:", error);
-    if (error.code === "SQLITE_CONSTRAINT") {
-      res.status(409).json({ error: "Sport with this name already exists" });
-    } else {
-      res.status(500).json({ error: "Failed to create sport" });
+      res.status(201).json({
+        message: "Sport created successfully",
+        sport: {
+          id: result.id,
+          name,
+          description,
+          image_path,
+          age_groups,
+          is_active: true,
+        },
+      });
+    } catch (error) {
+      console.error("Error creating sport:", error);
+      if (error.code === "SQLITE_CONSTRAINT") {
+        res.status(409).json({ error: "Sport with this name already exists" });
+      } else {
+        res.status(500).json({ error: "Failed to create sport" });
+      }
     }
-  }
-});
+  },
+);
 
 // Update sport
-router.put("/sports/:id", validateSport, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, description, age_groups, is_active } = req.body;
+router.put(
+  "/sports/:id",
+  upload.single("image"),
+  validateSport,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, description, age_groups, is_active } = req.body;
+      const image_path = req.file
+        ? req.file.filename
+        : req.body.existing_image_path;
 
-    const result = await db.runQuery(
-      "UPDATE sports SET name = ?, description = ?, age_groups = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-      [name, description, JSON.stringify(age_groups), is_active ? 1 : 0, id]
-    );
+      const result = await db.runQuery(
+        "UPDATE sports SET name = ?, description = ?, image_path = ?, age_groups = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+        [
+          name,
+          description,
+          image_path,
+          JSON.stringify(age_groups),
+          is_active ? 1 : 0,
+          id,
+        ],
+      );
 
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "Sport not found" });
+      if (result.changes === 0) {
+        return res.status(404).json({ error: "Sport not found" });
+      }
+
+      res.json({
+        message: "Sport updated successfully",
+        sport: {
+          id: parseInt(id),
+          name,
+          description,
+          image_path,
+          age_groups,
+          is_active: !!is_active,
+        },
+      });
+    } catch (error) {
+      console.error("Error updating sport:", error);
+      res.status(500).json({ error: "Failed to update sport" });
     }
-
-    res.json({
-      message: "Sport updated successfully",
-      sport: {
-        id: parseInt(id),
-        name,
-        description,
-        age_groups,
-        is_active: !!is_active,
-      },
-    });
-  } catch (error) {
-    console.error("Error updating sport:", error);
-    res.status(500).json({ error: "Failed to update sport" });
-  }
-});
+  },
+);
 
 // Delete sport
 router.delete("/sports/:id", async (req, res) => {
@@ -102,7 +152,7 @@ router.delete("/sports/:id", async (req, res) => {
     // Check if sport has active schedules
     const schedules = await db.getAllQuery(
       "SELECT id FROM schedules WHERE sport_id = ? AND is_active = 1",
-      [id]
+      [id],
     );
     if (schedules.length > 0) {
       return res
@@ -167,7 +217,7 @@ router.post("/schedules", validateSchedule, async (req, res) => {
     // Verify sport exists and is active
     const sport = await db.getQuery(
       "SELECT id, name FROM sports WHERE id = ? AND is_active = 1",
-      [sport_id]
+      [sport_id],
     );
     if (!sport) {
       return res.status(400).json({ error: "Invalid or inactive sport" });
@@ -182,7 +232,7 @@ router.post("/schedules", validateSchedule, async (req, res) => {
         end_time,
         age_group,
         max_participants || 20,
-      ]
+      ],
     );
 
     res.status(201).json({
@@ -222,7 +272,7 @@ router.put("/schedules/:id", validateSchedule, async (req, res) => {
     // Verify sport exists and is active
     const sport = await db.getQuery(
       "SELECT id, name FROM sports WHERE id = ? AND is_active = 1",
-      [sport_id]
+      [sport_id],
     );
     if (!sport) {
       return res.status(400).json({ error: "Invalid or inactive sport" });
@@ -239,7 +289,7 @@ router.put("/schedules/:id", validateSchedule, async (req, res) => {
         max_participants || 20,
         is_active ? 1 : 0,
         id,
-      ]
+      ],
     );
 
     if (result.changes === 0) {
@@ -295,7 +345,7 @@ router.get("/statistics", async (req, res) => {
 
     // Total members
     const totalMembers = await db.getQuery(
-      'SELECT COUNT(*) as count FROM users WHERE role = "member" AND is_active = 1'
+      'SELECT COUNT(*) as count FROM users WHERE role = "member" AND is_active = 1',
     );
     stats.total_members = totalMembers.count;
 
@@ -308,13 +358,13 @@ router.get("/statistics", async (req, res) => {
 
     // Total sports
     const totalSports = await db.getQuery(
-      "SELECT COUNT(*) as count FROM sports WHERE is_active = 1"
+      "SELECT COUNT(*) as count FROM sports WHERE is_active = 1",
     );
     stats.total_sports = totalSports.count;
 
     // Total schedule sessions
     const totalSessions = await db.getQuery(
-      "SELECT COUNT(*) as count FROM schedules WHERE is_active = 1"
+      "SELECT COUNT(*) as count FROM schedules WHERE is_active = 1",
     );
     stats.total_sessions = totalSessions.count;
 
@@ -386,7 +436,7 @@ router.put("/users/:id/status", async (req, res) => {
 
     const result = await db.runQuery(
       "UPDATE users SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-      [is_active ? 1 : 0, id]
+      [is_active ? 1 : 0, id],
     );
 
     if (result.changes === 0) {

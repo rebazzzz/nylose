@@ -152,13 +152,12 @@
                                         <th>Dag</th>
                                         <th>Tid</th>
                                         <th>Åldersgrupp</th>
-                                        <th>Max deltagare</th>
                                         <th>Åtgärder</th>
                                     </tr>
                                 </thead>
                                 <tbody id="schedules-tbody">
                                     <tr>
-                                        <td colspan="7">Laddar schema...</td>
+                                        <td colspan="6">Laddar schema...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -235,11 +234,17 @@
                     <textarea id="sport-description" required></textarea>
                 </div>
                 <div class="form-group">
+                    <label for="sport-image">Bild:</label>
+                    <input type="file" id="sport-image" accept="image/*">
+                    <small>Valfritt. Max 5MB. Endast bildfiler.</small>
+                </div>
+                <div class="form-group">
                     <label>Åldersgrupper:</label>
                     <div class="checkbox-group">
-                        <label><input type="checkbox" value="barn"> Barn (6-12 år)</label>
-                        <label><input type="checkbox" value="ungdom"> Ungdom (13-17 år)</label>
-                        <label><input type="checkbox" value="vuxen"> Vuxen (18+ år)</label>
+                        <label><input type="checkbox" value="6-13"> 6-13 år</label>
+                        <label><input type="checkbox" value="14+"> 14+ år</label>
+                        <label><input type="checkbox" value="7-13"> 7-13 år</label>
+                        <label><input type="checkbox" value="13+"> 13+ år</label>
                     </div>
                 </div>
                 <div class="form-actions">
@@ -278,20 +283,21 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="schedule-time">Tid:</label>
-                    <input type="time" id="schedule-time" required>
+                    <label for="schedule-start-time">Starttid:</label>
+                    <input type="time" id="schedule-start-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="schedule-end-time">Sluttid:</label>
+                    <input type="time" id="schedule-end-time" required>
                 </div>
                 <div class="form-group">
                     <label for="schedule-age-group">Åldersgrupp:</label>
                     <select id="schedule-age-group" required>
-                        <option value="barn">Barn (6-12 år)</option>
-                        <option value="ungdom">Ungdom (13-17 år)</option>
-                        <option value="vuxen">Vuxen (18+ år)</option>
+                        <option value="6-13 år">6-13 år</option>
+                        <option value="14+">14+</option>
+                        <option value="7-13">7-13</option>
+                        <option value="13+">13+</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="schedule-max-participants">Max antal deltagare:</label>
-                    <input type="number" id="schedule-max-participants" min="1" max="50" required>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Spara</button>
@@ -311,6 +317,7 @@
             </div>
             <form id="edit-sport-form">
                 <input type="hidden" id="edit-sport-id">
+                <input type="hidden" id="edit-existing-image-path">
                 <div class="form-group">
                     <label for="edit-sport-name">Namn:</label>
                     <input type="text" id="edit-sport-name" required>
@@ -320,11 +327,17 @@
                     <textarea id="edit-sport-description" required></textarea>
                 </div>
                 <div class="form-group">
+                    <label for="edit-sport-image">Bild:</label>
+                    <input type="file" id="edit-sport-image" accept="image/*">
+                    <small>Valfritt. Max 5MB. Endast bildfiler. Lämna tomt för att behålla nuvarande bild.</small>
+                </div>
+                <div class="form-group">
                     <label>Åldersgrupper:</label>
                     <div class="checkbox-group">
-                        <label><input type="checkbox" value="barn" id="edit-age-barn"> Barn (6-12 år)</label>
-                        <label><input type="checkbox" value="ungdom" id="edit-age-ungdom"> Ungdom (13-17 år)</label>
-                        <label><input type="checkbox" value="vuxen" id="edit-age-vuxen"> Vuxen (18+ år)</label>
+                        <label><input type="checkbox" value="6-13" id="edit-age-6-13"> 6-13 år</label>
+                        <label><input type="checkbox" value="14+" id="edit-age-14+"> 14+ år</label>
+                        <label><input type="checkbox" value="7-13" id="edit-age-7-13"> 7-13 år</label>
+                        <label><input type="checkbox" value="13+" id="edit-age-13+"> 13+ år</label>
                     </div>
                 </div>
                 <div class="form-actions">
@@ -364,20 +377,21 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="edit-schedule-time">Tid:</label>
-                    <input type="time" id="edit-schedule-time" required>
+                    <label for="edit-schedule-start-time">Starttid:</label>
+                    <input type="time" id="edit-schedule-start-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-schedule-end-time">Sluttid:</label>
+                    <input type="time" id="edit-schedule-end-time" required>
                 </div>
                 <div class="form-group">
                     <label for="edit-schedule-age-group">Åldersgrupp:</label>
                     <select id="edit-schedule-age-group" required>
-                        <option value="barn">Barn (6-12 år)</option>
-                        <option value="ungdom">Ungdom (13-17 år)</option>
-                        <option value="vuxen">Vuxen (18+ år)</option>
+                        <option value="6-13 år">6-13 år</option>
+                        <option value="14+">14+</option>
+                        <option value="7-13">7-13</option>
+                        <option value="13+">13+</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="edit-schedule-max-participants">Max antal deltagare:</label>
-                    <input type="number" id="edit-schedule-max-participants" min="1" max="50" required>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Uppdatera</button>

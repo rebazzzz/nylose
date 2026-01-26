@@ -269,7 +269,7 @@ async function loadSchedules() {
 
     if (schedules.length === 0) {
       tbody.innerHTML =
-        '<tr><td colspan="7">Inga scheman tillgängliga</td></tr>';
+        '<tr><td colspan="6">Inga scheman tillgängliga</td></tr>';
       return;
     }
 
@@ -279,10 +279,9 @@ async function loadSchedules() {
             <tr>
                 <td>${schedule.id}</td>
                 <td>${schedule.sport_name}</td>
-                <td>${schedule.day}</td>
-                <td>${schedule.time}</td>
+                <td>${schedule.day_of_week || schedule.day}</td>
+                <td>${schedule.start_time} - ${schedule.end_time}</td>
                 <td>${schedule.age_group}</td>
-                <td>${schedule.max_participants}</td>
                 <td>
                     <button class="btn btn-small" onclick="editSchedule(${schedule.id})">
                         <i class="fas fa-edit"></i>
@@ -498,14 +497,18 @@ async function editSport(sportId) {
     document.getElementById("edit-sport-id").value = sport.id;
     document.getElementById("edit-sport-name").value = sport.name;
     document.getElementById("edit-sport-description").value = sport.description;
+    document.getElementById("edit-existing-image-path").value =
+      sport.image_path || "";
 
     // Set age group checkboxes
-    document.getElementById("edit-age-barn").checked =
-      sport.age_groups.includes("barn");
-    document.getElementById("edit-age-ungdom").checked =
-      sport.age_groups.includes("ungdom");
-    document.getElementById("edit-age-vuxen").checked =
-      sport.age_groups.includes("vuxen");
+    document.getElementById("edit-age-6-13").checked =
+      sport.age_groups.includes("6-13");
+    document.getElementById("edit-age-14+").checked =
+      sport.age_groups.includes("14+");
+    document.getElementById("edit-age-7-13").checked =
+      sport.age_groups.includes("7-13");
+    document.getElementById("edit-age-13+").checked =
+      sport.age_groups.includes("13+");
 
     // Show modal
     document.getElementById("edit-sport-modal").style.display = "block";
@@ -534,12 +537,13 @@ async function editSchedule(scheduleId) {
     // Populate edit form
     document.getElementById("edit-schedule-id").value = schedule.id;
     document.getElementById("edit-schedule-sport").value = schedule.sport_id;
-    document.getElementById("edit-schedule-day").value = schedule.day;
-    document.getElementById("edit-schedule-time").value = schedule.time;
+    document.getElementById("edit-schedule-day").value =
+      schedule.day_of_week || schedule.day;
+    document.getElementById("edit-schedule-start-time").value =
+      schedule.start_time;
+    document.getElementById("edit-schedule-end-time").value = schedule.end_time;
     document.getElementById("edit-schedule-age-group").value =
       schedule.age_group;
-    document.getElementById("edit-schedule-max-participants").value =
-      schedule.max_participants;
 
     // Show modal
     document.getElementById("edit-schedule-modal").style.display = "block";
@@ -568,32 +572,38 @@ function initializeForms() {
 
       const ageGroups = [];
       if (
-        document.querySelector('#add-sport-modal input[value="barn"]').checked
+        document.querySelector('#add-sport-modal input[value="6-13"]').checked
       )
-        ageGroups.push("barn");
+        ageGroups.push("6-13");
+      if (document.querySelector('#add-sport-modal input[value="14+"]').checked)
+        ageGroups.push("14+");
       if (
-        document.querySelector('#add-sport-modal input[value="ungdom"]').checked
+        document.querySelector('#add-sport-modal input[value="7-13"]').checked
       )
-        ageGroups.push("ungdom");
-      if (
-        document.querySelector('#add-sport-modal input[value="vuxen"]').checked
-      )
-        ageGroups.push("vuxen");
+        ageGroups.push("7-13");
+      if (document.querySelector('#add-sport-modal input[value="13+"]').checked)
+        ageGroups.push("13+");
 
-      const sportData = {
-        name: document.getElementById("sport-name").value,
-        description: document.getElementById("sport-description").value,
-        age_groups: ageGroups,
-      };
+      const formData = new FormData();
+      formData.append("name", document.getElementById("sport-name").value);
+      formData.append(
+        "description",
+        document.getElementById("sport-description").value,
+      );
+      formData.append("age_groups", JSON.stringify(ageGroups));
+
+      const imageFile = document.getElementById("sport-image").files[0];
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
 
       try {
         const response = await fetch("http://localhost:3001/api/admin/sports", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify(sportData),
+          body: formData,
         });
 
         if (!response.ok) throw new Error("Failed to add sport");
@@ -617,12 +627,10 @@ function initializeForms() {
 
       const scheduleData = {
         sport_id: parseInt(document.getElementById("schedule-sport").value),
-        day: document.getElementById("schedule-day").value,
-        time: document.getElementById("schedule-time").value,
+        day_of_week: document.getElementById("schedule-day").value,
+        start_time: document.getElementById("schedule-start-time").value,
+        end_time: document.getElementById("schedule-end-time").value,
         age_group: document.getElementById("schedule-age-group").value,
-        max_participants: parseInt(
-          document.getElementById("schedule-max-participants").value,
-        ),
       };
 
       try {
@@ -658,18 +666,31 @@ function initializeForms() {
 
       const sportId = document.getElementById("edit-sport-id").value;
       const ageGroups = [];
-      if (document.getElementById("edit-age-barn").checked)
-        ageGroups.push("barn");
-      if (document.getElementById("edit-age-ungdom").checked)
-        ageGroups.push("ungdom");
-      if (document.getElementById("edit-age-vuxen").checked)
-        ageGroups.push("vuxen");
+      if (document.getElementById("edit-age-6-13").checked)
+        ageGroups.push("6-13");
+      if (document.getElementById("edit-age-14+").checked)
+        ageGroups.push("14+");
+      if (document.getElementById("edit-age-7-13").checked)
+        ageGroups.push("7-13");
+      if (document.getElementById("edit-age-13+").checked)
+        ageGroups.push("13+");
 
-      const sportData = {
-        name: document.getElementById("edit-sport-name").value,
-        description: document.getElementById("edit-sport-description").value,
-        age_groups: ageGroups,
-      };
+      const formData = new FormData();
+      formData.append("name", document.getElementById("edit-sport-name").value);
+      formData.append(
+        "description",
+        document.getElementById("edit-sport-description").value,
+      );
+      formData.append("age_groups", JSON.stringify(ageGroups));
+      formData.append(
+        "existing_image_path",
+        document.getElementById("edit-existing-image-path").value,
+      );
+
+      const imageFile = document.getElementById("edit-sport-image").files[0];
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
 
       try {
         const response = await fetch(
@@ -677,10 +698,9 @@ function initializeForms() {
           {
             method: "PUT",
             headers: {
-              "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-            body: JSON.stringify(sportData),
+            body: formData,
           },
         );
 
@@ -708,12 +728,10 @@ function initializeForms() {
         sport_id: parseInt(
           document.getElementById("edit-schedule-sport").value,
         ),
-        day: document.getElementById("edit-schedule-day").value,
-        time: document.getElementById("edit-schedule-time").value,
+        day_of_week: document.getElementById("edit-schedule-day").value,
+        start_time: document.getElementById("edit-schedule-start-time").value,
+        end_time: document.getElementById("edit-schedule-end-time").value,
         age_group: document.getElementById("edit-schedule-age-group").value,
-        max_participants: parseInt(
-          document.getElementById("edit-schedule-max-participants").value,
-        ),
       };
 
       try {
