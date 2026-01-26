@@ -184,7 +184,6 @@
                                         <th>ID</th>
                                         <th>Namn</th>
                                         <th>Beskrivning</th>
-                                        <th>Åldersgrupper</th>
                                         <th>Åtgärder</th>
                                     </tr>
                                 </thead>
@@ -238,15 +237,6 @@
                     <input type="file" id="sport-image" accept="image/*">
                     <small>Valfritt. Max 5MB. Endast bildfiler.</small>
                 </div>
-                <div class="form-group">
-                    <label>Åldersgrupper:</label>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" value="6-13"> 6-13 år</label>
-                        <label><input type="checkbox" value="14+"> 14+ år</label>
-                        <label><input type="checkbox" value="7-13"> 7-13 år</label>
-                        <label><input type="checkbox" value="13+"> 13+ år</label>
-                    </div>
-                </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Spara</button>
                     <button type="button" class="btn btn-secondary"
@@ -295,7 +285,7 @@
                     <select id="schedule-age-group" required>
                         <option value="6-13 år">6-13 år</option>
                         <option value="14+">14+</option>
-                        <option value="7-13">7-13</option>
+                        <option value="7-13 år">7-13 år</option>
                         <option value="13+">13+</option>
                     </select>
                 </div>
@@ -330,15 +320,6 @@
                     <label for="edit-sport-image">Bild:</label>
                     <input type="file" id="edit-sport-image" accept="image/*">
                     <small>Valfritt. Max 5MB. Endast bildfiler. Lämna tomt för att behålla nuvarande bild.</small>
-                </div>
-                <div class="form-group">
-                    <label>Åldersgrupper:</label>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" value="6-13" id="edit-age-6-13"> 6-13 år</label>
-                        <label><input type="checkbox" value="14+" id="edit-age-14+"> 14+ år</label>
-                        <label><input type="checkbox" value="7-13" id="edit-age-7-13"> 7-13 år</label>
-                        <label><input type="checkbox" value="13+" id="edit-age-13+"> 13+ år</label>
-                    </div>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Uppdatera</button>

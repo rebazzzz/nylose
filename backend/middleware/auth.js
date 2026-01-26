@@ -122,30 +122,15 @@ const validateLogin = (req, res, next) => {
 };
 
 const validateSport = (req, res, next) => {
-  const { name, description, age_groups } = req.body;
+  const { name, description } = req.body;
 
   if (!name || name.trim().length === 0) {
     return res.status(400).json({ error: "Sport name is required" });
   }
 
-  // Handle age_groups that might come as JSON string from FormData
-  let parsedAgeGroups = age_groups;
-  if (typeof age_groups === "string") {
-    try {
-      parsedAgeGroups = JSON.parse(age_groups);
-    } catch (e) {
-      return res.status(400).json({ error: "Invalid age groups format" });
-    }
+  if (!description || description.trim().length === 0) {
+    return res.status(400).json({ error: "Sport description is required" });
   }
-
-  if (!Array.isArray(parsedAgeGroups) || parsedAgeGroups.length === 0) {
-    return res
-      .status(400)
-      .json({ error: "At least one age group is required" });
-  }
-
-  // Replace the string with parsed array for the route handler
-  req.body.age_groups = parsedAgeGroups;
 
   next();
 };

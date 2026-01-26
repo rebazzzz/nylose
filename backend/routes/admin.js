@@ -67,12 +67,12 @@ router.post(
   validateSport,
   async (req, res) => {
     try {
-      const { name, description, age_groups } = req.body;
+      const { name, description } = req.body;
       const image_path = req.file ? req.file.filename : null;
 
       const result = await db.runQuery(
-        "INSERT INTO sports (name, description, image_path, age_groups) VALUES (?, ?, ?, ?)",
-        [name, description, image_path, JSON.stringify(age_groups)],
+        "INSERT INTO sports (name, description, image_path) VALUES (?, ?, ?)",
+        [name, description, image_path],
       );
 
       res.status(201).json({
@@ -82,7 +82,6 @@ router.post(
           name,
           description,
           image_path,
-          age_groups,
           is_active: true,
         },
       });
@@ -105,21 +104,14 @@ router.put(
   async (req, res) => {
     try {
       const { id } = req.params;
-      const { name, description, age_groups, is_active } = req.body;
+      const { name, description, is_active } = req.body;
       const image_path = req.file
         ? req.file.filename
         : req.body.existing_image_path;
 
       const result = await db.runQuery(
-        "UPDATE sports SET name = ?, description = ?, image_path = ?, age_groups = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-        [
-          name,
-          description,
-          image_path,
-          JSON.stringify(age_groups),
-          is_active ? 1 : 0,
-          id,
-        ],
+        "UPDATE sports SET name = ?, description = ?, image_path = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+        [name, description, image_path, is_active ? 1 : 0, id],
       );
 
       if (result.changes === 0) {
@@ -133,7 +125,6 @@ router.put(
           name,
           description,
           image_path,
-          age_groups,
           is_active: !!is_active,
         },
       });

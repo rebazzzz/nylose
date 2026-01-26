@@ -222,7 +222,7 @@ async function loadSports() {
 
     if (sports.length === 0) {
       tbody.innerHTML =
-        '<tr><td colspan="5">Inga sporter tillgängliga</td></tr>';
+        '<tr><td colspan="4">Inga sporter tillgängliga</td></tr>';
       return;
     }
 
@@ -233,7 +233,6 @@ async function loadSports() {
                 <td>${sport.id}</td>
                 <td>${sport.name}</td>
                 <td>${sport.description}</td>
-                <td>${sport.age_groups.join(", ")}</td>
                 <td>
                     <button class="btn btn-small" onclick="editSport(${sport.id})">
                         <i class="fas fa-edit"></i>
@@ -249,7 +248,7 @@ async function loadSports() {
   } catch (error) {
     console.error("Error loading sports:", error);
     document.getElementById("sports-tbody").innerHTML =
-      '<tr><td colspan="5">Kunde inte ladda sporter</td></tr>';
+      '<tr><td colspan="4">Kunde inte ladda sporter</td></tr>';
   }
 }
 
@@ -500,16 +499,6 @@ async function editSport(sportId) {
     document.getElementById("edit-existing-image-path").value =
       sport.image_path || "";
 
-    // Set age group checkboxes
-    document.getElementById("edit-age-6-13").checked =
-      sport.age_groups.includes("6-13");
-    document.getElementById("edit-age-14+").checked =
-      sport.age_groups.includes("14+");
-    document.getElementById("edit-age-7-13").checked =
-      sport.age_groups.includes("7-13");
-    document.getElementById("edit-age-13+").checked =
-      sport.age_groups.includes("13+");
-
     // Show modal
     document.getElementById("edit-sport-modal").style.display = "block";
   } catch (error) {
@@ -570,27 +559,12 @@ function initializeForms() {
     .addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      const ageGroups = [];
-      if (
-        document.querySelector('#add-sport-modal input[value="6-13"]').checked
-      )
-        ageGroups.push("6-13");
-      if (document.querySelector('#add-sport-modal input[value="14+"]').checked)
-        ageGroups.push("14+");
-      if (
-        document.querySelector('#add-sport-modal input[value="7-13"]').checked
-      )
-        ageGroups.push("7-13");
-      if (document.querySelector('#add-sport-modal input[value="13+"]').checked)
-        ageGroups.push("13+");
-
       const formData = new FormData();
       formData.append("name", document.getElementById("sport-name").value);
       formData.append(
         "description",
         document.getElementById("sport-description").value,
       );
-      formData.append("age_groups", JSON.stringify(ageGroups));
 
       const imageFile = document.getElementById("sport-image").files[0];
       if (imageFile) {
@@ -665,15 +639,6 @@ function initializeForms() {
       e.preventDefault();
 
       const sportId = document.getElementById("edit-sport-id").value;
-      const ageGroups = [];
-      if (document.getElementById("edit-age-6-13").checked)
-        ageGroups.push("6-13");
-      if (document.getElementById("edit-age-14+").checked)
-        ageGroups.push("14+");
-      if (document.getElementById("edit-age-7-13").checked)
-        ageGroups.push("7-13");
-      if (document.getElementById("edit-age-13+").checked)
-        ageGroups.push("13+");
 
       const formData = new FormData();
       formData.append("name", document.getElementById("edit-sport-name").value);
@@ -681,7 +646,6 @@ function initializeForms() {
         "description",
         document.getElementById("edit-sport-description").value,
       );
-      formData.append("age_groups", JSON.stringify(ageGroups));
       formData.append(
         "existing_image_path",
         document.getElementById("edit-existing-image-path").value,

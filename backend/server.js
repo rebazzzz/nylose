@@ -28,12 +28,14 @@ app.use(
   }),
 );
 
-// Rate limiting
-const limiter = rateLimit({
+// Rate limiting - disabled for admin routes in development
+const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
 });
-app.use(limiter);
+
+// No rate limiting for admin routes in development
+app.use(generalLimiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
