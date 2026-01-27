@@ -50,13 +50,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Import routes
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin");
-const memberRoutes = require("./routes/member");
 const publicRoutes = require("./routes/public");
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/member", memberRoutes);
 app.use("/api/public", publicRoutes);
 
 // Health check

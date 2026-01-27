@@ -36,7 +36,7 @@
             </div>
 
             <div class="dashboard-grid">
-                <div class="dashboard-card" data-section="users">
+                <div class="dashboard-card" data-section="members">
                     <div class="card-icon">
                         <i class="fas fa-users"></i>
                     </div>
@@ -45,7 +45,7 @@
                         <p id="members-count">Laddar...</p>
                     </div>
                     <div class="card-action">
-                        <button class="btn" onclick="showSection('users')">
+                        <button class="btn" onclick="showSection('members')">
                             <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
@@ -99,8 +99,8 @@
 
             <!-- Dynamic Content Sections -->
             <div id="content-sections" class="content-sections">
-                <!-- Users Section -->
-                <div id="users-section" class="content-section" style="display: none;">
+                <!-- Members Section -->
+                <div id="members-section" class="content-section" style="display: none;">
                     <div class="section-header">
                         <h2>Medlemmar</h2>
                         <button class="btn btn-secondary" onclick="hideAllSections()">
@@ -109,21 +109,23 @@
                     </div>
                     <div class="section-content">
                         <div class="data-table">
-                            <table id="users-table">
+                            <table id="members-table">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
                                         <th>Namn</th>
+                                        <th>Personnummer</th>
                                         <th>E-post</th>
                                         <th>Telefon</th>
-                                        <th>Medlemskap</th>
+                                        <th>Adress</th>
+                                        <th>Förälder</th>
                                         <th>Status</th>
-                                        <th>Åtgärder</th>
+                                        <th>Skapad</th>
                                     </tr>
                                 </thead>
-                                <tbody id="users-tbody">
+                                <tbody id="members-tbody">
                                     <tr>
-                                        <td colspan="7">Laddar medlemmar...</td>
+                                        <td colspan="9">Laddar medlemmar...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -384,6 +386,43 @@
             </form>
         </div>
     </div>
+
+    <!-- Add Admin Modal -->
+    <div id="add-admin-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Lägg till administratör</h3>
+                <span class="modal-close" onclick="closeModal('add-admin-modal')">&times;</span>
+            </div>
+            <form id="add-admin-form">
+                <div class="form-group">
+                    <label for="admin-firstname">Förnamn:</label>
+                    <input type="text" id="admin-firstname" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-lastname">Efternamn:</label>
+                    <input type="text" id="admin-lastname" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-email">E-post:</label>
+                    <input type="email" id="admin-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-phone">Telefon:</label>
+                    <input type="tel" id="admin-phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Lösenord:</label>
+                    <input type="password" id="admin-password" required minlength="6">
+                    <small>Minst 6 tecken.</small>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Skapa admin</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('add-admin-modal')">Avbryt</button>
+                </div>
+            </form>
+        </div>
     </div>
     </section>
 

@@ -17,8 +17,8 @@ function showSection(sectionName) {
 
     // Load data for the section
     switch (sectionName) {
-      case "users":
-        loadUsers();
+      case "members":
+        loadMembers();
         break;
       case "sports":
         loadSports();
@@ -44,6 +44,10 @@ function showAddSportModal() {
 
 function showAddScheduleModal() {
   document.getElementById("add-schedule-modal").style.display = "block";
+}
+
+function showAddAdminModal() {
+  document.getElementById("add-admin-modal").style.display = "block";
 }
 
 function closeModal(modalId) {
@@ -86,9 +90,9 @@ document.addEventListener("DOMContentLoaded", function () {
  */
 async function loadDashboardCounts() {
   try {
-    const [usersResponse, sportsResponse, schedulesResponse] =
+    const [membersResponse, sportsResponse, schedulesResponse] =
       await Promise.all([
-        fetch("http://localhost:3001/api/admin/users", {
+        fetch("http://localhost:3001/api/admin/members", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }),
         fetch("http://localhost:3001/api/admin/sports", {
@@ -99,12 +103,12 @@ async function loadDashboardCounts() {
         }),
       ]);
 
-    const users = await usersResponse.json();
+    const members = await membersResponse.json();
     const sports = await sportsResponse.json();
     const schedules = await schedulesResponse.json();
 
     document.getElementById("members-count").textContent =
-      `${users.length} medlemmar`;
+      `${members.length} medlemmar`;
     document.getElementById("sports-count").textContent =
       `${sports.length} sporter`;
     document.getElementById("schedules-count").textContent =
@@ -157,42 +161,102 @@ function hideAllSections() {
 }
 
 /**
- * Load users data
+ * Load members data
  */
-async function loadUsers() {
+async function loadMembers() {
   try {
-    const response = await fetch("http://localhost:3001/api/admin/users", {
+    const response = await fetch("http://localhost:3001/api/admin/members", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
 
-    if (!response.ok) throw new Error("Failed to fetch users");
+    if (!response.ok) throw new Error("Failed to fetch members");
 
-    const users = await response.json();
-    const tbody = document.getElementById("users-tbody");
+    const members = await response.json();
+    const tbody = document.getElementById("members-tbody");
 
-    if (users.length === 0) {
+    if (members.length === 0) {
       tbody.innerHTML =
-        '<tr><td colspan="7">Inga medlemmar registrerade</td></tr>';
+        '<tr><td colspan="9">Inga medlemmar registrerade</td></tr>';
       return;
     }
 
-    tbody.innerHTML = users
-      .map(
-        (user) => `
+    tbody.innerHTML = members
+      .map((member) => {
+        // Format parent info
+        let parentInfo = "-";
+        if (member.parent_name) {
+          parentInfo = `${member.parent_name}`;
+          if (member.parent_lastname) {
+            parentInfo += ` ${member.parent_lastname}`;
+          }
+          if (member.parent_phone) {
+            parentInfo += ` (${member.parent_phone})`;
+          }
+        }
+
+        return `
             <tr>
-                <td>${user.id}</td>
-                <td>${user.first_name} ${user.last_name}</td>
-                <td>${user.email}</td>
-                <td>${user.phone || "-"}</td>
-                <td>${user.membership_type || "Grund"}</td>
+                <td>${member.id}</td>
+                <td>${member.first_name} ${member.last_name}</td>
+                <td>${member.personnummer || "-"}</td>
+                <td>${member.email}</td>
+                <td>${member.phone || "-"}</td>
+                <td>${member.address || "-"}</td>
+                <td>${parentInfo}</td>
                 <td>
-                    <span class="status ${user.is_active ? "active" : "inactive"}">
-                        ${user.is_active ? "Aktiv" : "Inaktiv"}
+                    <span class="status ${member.is_active ? "active" : "inactive"}">
+                        ${member.is_active ? "Aktiv" : "Inaktiv"}
                     </span>
                 </td>
+                <td>${new Date(member.created_at).toLocaleDateString("sv-SE")}</td>
+            </tr>
+        `;
+      })
+      .join("");
+  } catch (error) {
+    console.error("Error loading members:", error);
+    document.getElementById("members-tbody").innerHTML =
+      '<tr><td colspan="9">Kunde inte ladda medlemmar</td></tr>';
+  }
+}
+
+/**
+ * Load admins data
+ */
+async function loadAdmins() {
+  try {
+    const response = await fetch("http://localhost:3001/api/admin/admins", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch admins");
+
+    const admins = await response.json();
+    const tbody = document.getElementById("admins-tbody");
+
+    if (admins.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="7">Inga administratörer registrerade</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = admins
+      .map(
+        (admin) => `
+            <tr>
+                <td>${admin.id}</td>
+                <td>${admin.first_name} ${admin.last_name}</td>
+                <td>${admin.email}</td>
+                <td>${admin.phone || "-"}</td>
                 <td>
-                    <button class="btn btn-small" onclick="toggleUserStatus(${user.id}, ${!user.is_active})">
-                        ${user.is_active ? "Inaktivera" : "Aktivera"}
+                    <span class="status ${admin.is_active ? "active" : "inactive"}">
+                        ${admin.is_active ? "Aktiv" : "Inaktiv"}
+                    </span>
+                </td>
+                <td>${new Date(admin.created_at).toLocaleDateString("sv-SE")}</td>
+                <td>
+                    <button class="btn btn-small" onclick="toggleAdminStatus(${admin.id}, ${!admin.is_active})">
+                        ${admin.is_active ? "Inaktivera" : "Aktivera"}
                     </button>
                 </td>
             </tr>
@@ -200,9 +264,9 @@ async function loadUsers() {
       )
       .join("");
   } catch (error) {
-    console.error("Error loading users:", error);
-    document.getElementById("users-tbody").innerHTML =
-      '<tr><td colspan="7">Kunde inte ladda medlemmar</td></tr>';
+    console.error("Error loading admins:", error);
+    document.getElementById("admins-tbody").innerHTML =
+      '<tr><td colspan="7">Kunde inte ladda administratörer</td></tr>';
   }
 }
 
@@ -382,12 +446,12 @@ async function loadSportsForSelect() {
 }
 
 /**
- * Toggle user status
+ * Toggle admin status
  */
-async function toggleUserStatus(userId, newStatus) {
+async function toggleAdminStatus(adminId, newStatus) {
   try {
     const response = await fetch(
-      `http://localhost:3001/api/admin/users/${userId}/status`,
+      `http://localhost:3001/api/admin/admins/${adminId}/status`,
       {
         method: "PUT",
         headers: {
@@ -398,14 +462,14 @@ async function toggleUserStatus(userId, newStatus) {
       },
     );
 
-    if (!response.ok) throw new Error("Failed to update user status");
+    if (!response.ok) throw new Error("Failed to update admin status");
 
-    // Reload users
-    loadUsers();
+    // Reload admins
+    loadAdmins();
     loadDashboardCounts();
   } catch (error) {
-    console.error("Error updating user status:", error);
-    showError("Kunde inte uppdatera användarstatus");
+    console.error("Error updating admin status:", error);
+    showError("Kunde inte uppdatera adminstatus");
   }
 }
 
@@ -853,6 +917,45 @@ function initializeForms() {
       } catch (error) {
         console.error("Error updating schedule:", error);
         alert("Kunde inte uppdatera schema");
+      }
+    });
+  // Add admin form
+  document
+    .getElementById("add-admin-form")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const adminData = {
+        first_name: document.getElementById("admin-firstname").value,
+        last_name: document.getElementById("admin-lastname").value,
+        email: document.getElementById("admin-email").value,
+        phone: document.getElementById("admin-phone").value,
+        password: document.getElementById("admin-password").value,
+      };
+
+      try {
+        const response = await fetch(
+          "http://localhost:3001/api/auth/register-admin",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify(adminData),
+          },
+        );
+
+        if (!response.ok) throw new Error("Failed to add admin");
+
+        closeModal("add-admin-modal");
+        this.reset();
+        loadAdmins();
+        loadDashboardCounts();
+        showSuccess("Administratören har lagts till");
+      } catch (error) {
+        console.error("Error adding admin:", error);
+        showError("Kunde inte lägga till administratör");
       }
     });
 }

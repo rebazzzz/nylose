@@ -5,6 +5,27 @@ document.addEventListener("DOMContentLoaded", function () {
   const registerBtn = document.getElementById("register-btn");
   const registrationForm = document.querySelector(".registration-form");
 
+  // Helper function to calculate age
+  function calculateAgeFromPersonnummer(personnummer) {
+    const digits = personnummer.replace(/[^0-9]/g, "");
+    if (digits.length !== 12) return null;
+    const birthDateStr = digits.substring(0, 8);
+    const year = parseInt(birthDateStr.substring(0, 4));
+    const month = parseInt(birthDateStr.substring(4, 6)) - 1;
+    const day = parseInt(birthDateStr.substring(6, 8));
+    const birthDate = new Date(year, month, day);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  }
+
   // Notification functions
   function showNotification(message, type = "info", title = "Meddelande") {
     const modal = document.getElementById("notification-modal");
@@ -37,7 +58,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.getElementById("notification-confirm-btn").onclick =
       closeNotificationModal;
-    modal.style.display = "block";
+    modal.style.display = "flex"; // Changed to flex for better centering
+    modal.style.position = "fixed";
+    modal.style.top = "0";
+    modal.style.left = "0";
+    modal.style.width = "100%";
+    modal.style.height = "100%";
+    modal.style.zIndex = "9999";
   }
 
   function closeNotificationModal() {
@@ -53,47 +80,25 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   if (personnummerInput) {
-    const mask = "YYYYMMDD-XXXX";
-    personnummerInput.value = mask;
-    let pos = 0;
+    personnummerInput.addEventListener("input", function (e) {
+      // Allow only digits
+      let value = e.target.value.replace(/[^0-9]/g, "");
 
-    personnummerInput.addEventListener("keydown", function (e) {
-      if (e.key >= "0" && e.key <= "9") {
-        e.preventDefault();
-        if (pos < mask.length && mask[pos] !== "-") {
-          let newValue =
-            personnummerInput.value.substring(0, pos) +
-            e.key +
-            personnummerInput.value.substring(pos + 1);
-          personnummerInput.value = newValue;
-          pos++;
-          if (pos < mask.length && mask[pos] === "-") {
-            pos++;
-          }
-          personnummerInput.setSelectionRange(pos, pos);
-        }
-      } else if (e.key === "Backspace") {
-        e.preventDefault();
-        if (pos > 0) {
-          if (pos < mask.length && mask[pos - 1] === "-") {
-            pos--;
-          }
-          pos--;
-          let char = mask[pos];
-          let newValue =
-            personnummerInput.value.substring(0, pos) +
-            char +
-            personnummerInput.value.substring(pos + 1);
-          personnummerInput.value = newValue;
-          personnummerInput.setSelectionRange(pos, pos);
-        }
-      } else {
-        e.preventDefault();
+      // Limit to 12 digits
+      if (value.length > 12) {
+        value = value.substring(0, 12);
       }
 
-      // Calculate age from personnummer if at least 8 digits
-      let digits = personnummerInput.value.replace(/[^0-9]/g, "");
-      if (digits.length >= 8) {
+      // Format as YYYYMMDD-XXXX when complete
+      if (value.length >= 8) {
+        value = value.substring(0, 8) + "-" + value.substring(8);
+      }
+
+      e.target.value = value;
+
+      // Calculate age from personnummer if 12 digits
+      if (value.replace(/-/g, "").length === 12) {
+        const digits = value.replace(/-/g, "");
         const birthDateStr = digits.substring(0, 8);
         const year = parseInt(birthDateStr.substring(0, 4));
         const month = parseInt(birthDateStr.substring(4, 6)) - 1; // JS months are 0-based
@@ -140,15 +145,25 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
 
       const formData = new FormData(registrationForm);
+      const personnummer = formData.get("personnummer").replace(/[^0-9-]/g, "");
+      const age = calculateAgeFromPersonnummer(personnummer);
+      const isMinor = age !== null && age < 18;
+
       const registrationData = {
         first_name: formData.get("firstname"),
         last_name: formData.get("lastname"),
-        personnummer: formData.get("personnummer").replace(/[^0-9-]/g, ""),
+        personnummer: personnummer,
         email: formData.get("email"),
         phone: formData.get("phone"),
         address: formData.get("address"),
-        password: formData.get("password"),
       };
+
+      // Add parent data if minor
+      if (isMinor) {
+        registrationData.parent_name = formData.get("parent-name");
+        registrationData.parent_lastname = formData.get("parent-lastname");
+        registrationData.parent_phone = formData.get("parent-phone");
+      }
 
       // Disable button
       registerBtn.disabled = true;
@@ -170,56 +185,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const registerResult = await registerResponse.json();
 
         if (registerResponse.ok) {
-          // Get membership ID for payment
-          const membershipResponse = await fetch(
-            "http://localhost:3001/api/member/profile",
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${registerResult.token}`,
-              },
-            },
+          // Success - show success message
+          showSuccess(
+            "Registrering genomförd! Kontrollera din e-post för bekräftelse.",
+            "Registrering lyckades",
           );
-
-          if (membershipResponse.ok) {
-            const membershipData = await membershipResponse.json();
-            const membership = membershipData.membership;
-
-            // Process payment
-            const paymentResponse = await fetch(
-              "http://localhost:3001/api/auth/payment",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${registerResult.token}`,
-                },
-                body: JSON.stringify({
-                  membership_id: membership.id,
-                  payment_method: formData.get("payment-method"),
-                }),
-              },
-            );
-
-            if (paymentResponse.ok) {
-              // Success - redirect to success page or show success message
-              showSuccess(
-                "Registrering och betalning genomförd! Kontrollera din e-post för bekräftelse.",
-                "Registrering lyckades",
-              );
-              window.location.href = "index.html";
-            } else {
-              showError(
-                "Registrering lyckades men betalning misslyckades. Kontakta oss för hjälp.",
-                "Betalningsfel",
-              );
-            }
-          } else {
-            showError(
-              "Registrering lyckades men kunde inte hitta medlemskap. Kontakta oss för hjälp.",
-              "Medlemskapsfel",
-            );
-          }
+          window.location.href = "index.html";
         } else {
           showError(
             "Registrering misslyckades: " + registerResult.error,

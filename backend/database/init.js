@@ -33,17 +33,20 @@ class Database {
   createTables() {
     return new Promise((resolve, reject) => {
       const tables = [
-        // Users table (admins and members)
+        // Users table (members and admins)
         `CREATE TABLE IF NOT EXISTS users (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           email TEXT UNIQUE NOT NULL,
-          password_hash TEXT NOT NULL,
+          password_hash TEXT,
           first_name TEXT NOT NULL,
           last_name TEXT NOT NULL,
+          personnummer TEXT UNIQUE,
           phone TEXT,
           address TEXT,
-          personnummer TEXT UNIQUE,
-          role TEXT NOT NULL CHECK (role IN ('admin', 'member')),
+          parent_name TEXT,
+          parent_lastname TEXT,
+          parent_phone TEXT,
+          role TEXT NOT NULL CHECK (role IN ('member', 'admin')),
           is_active BOOLEAN DEFAULT 1,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -139,29 +142,65 @@ class Database {
 
   runMigrations() {
     return new Promise((resolve, reject) => {
-      // Check if image_path column exists in sports table, add it if not
-      this.db.all("PRAGMA table_info(sports)", (err, columns) => {
+      // Check if personnummer column exists in users table, add it if not
+      this.db.all("PRAGMA table_info(users)", (err, columns) => {
         if (err) {
           reject(err);
           return;
         }
 
-        const hasImagePath = columns.some((col) => col.name === "image_path");
-        if (!hasImagePath) {
-          console.log("Adding image_path column to sports table...");
-          this.db.run(
-            "ALTER TABLE sports ADD COLUMN image_path TEXT",
-            (err) => {
+        const hasPersonnummer = columns.some(
+          (col) => col.name === "personnummer",
+        );
+        const hasAddress = columns.some((col) => col.name === "address");
+
+        if (!hasPersonnummer || !hasAddress) {
+          console.log(
+            "Adding personnummer and address columns to users table...",
+          );
+          let alterQueries = [];
+
+          if (!hasPersonnummer) {
+            alterQueries.push(
+              "ALTER TABLE users ADD COLUMN personnummer TEXT UNIQUE",
+            );
+          }
+
+          if (!hasAddress) {
+            alterQueries.push("ALTER TABLE users ADD COLUMN address TEXT");
+          }
+
+          // Execute alter queries sequentially
+          let completed = 0;
+          alterQueries.forEach((sql) => {
+            this.db.run(sql, (err) => {
               if (err) {
                 reject(err);
-              } else {
-                console.log(
-                  "Successfully added image_path column to sports table",
-                );
-                resolve();
+                return;
               }
-            },
-          );
+              completed++;
+              if (completed === alterQueries.length) {
+                // Update role constraint to allow 'member' role
+                this.db.run(
+                  "UPDATE sqlite_master SET sql = REPLACE(sql, 'CHECK (role IN (''admin''))', 'CHECK (role IN (''member'', ''admin''))') WHERE type = 'table' AND name = 'users'",
+                  (err) => {
+                    if (err) {
+                      console.log(
+                        "Could not update role constraint (might already be updated):",
+                        err.message,
+                      );
+                    }
+                    console.log("Successfully migrated users table");
+                    resolve();
+                  },
+                );
+              }
+            });
+          });
+
+          if (alterQueries.length === 0) {
+            resolve();
+          }
         } else {
           resolve();
         }

@@ -76,10 +76,14 @@ const validateRegistration = (req, res, next) => {
     errors.push("Valid email is required");
   }
 
-  // Password validation
-  if (!password || password.length < 6) {
-    errors.push("Password must be at least 6 characters long");
+  // Password validation - only required for admins
+  if (req.body.role === "admin" && (!password || password.length < 6)) {
+    errors.push(
+      "Password must be at least 6 characters long for admin accounts",
+    );
   }
+
+  // Members don't need passwords
 
   // Required fields
   if (!first_name || !last_name) {
@@ -92,6 +96,29 @@ const validateRegistration = (req, res, next) => {
     errors.push("Valid personnummer (YYYYMMDD-XXXX) is required");
   }
 
+  // Check if user is minor (under 18) based on personnummer
+  let isMinor = false;
+  if (personnummer && personnummerRegex.test(personnummer)) {
+    const digits = personnummer.replace(/[^0-9]/g, "");
+    if (digits.length === 12) {
+      const birthDateStr = digits.substring(0, 8);
+      const year = parseInt(birthDateStr.substring(0, 4));
+      const month = parseInt(birthDateStr.substring(4, 6)) - 1;
+      const day = parseInt(birthDateStr.substring(6, 8));
+      const birthDate = new Date(year, month, day);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+      isMinor = age < 18;
+    }
+  }
+
   // Phone validation (basic)
   const phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/;
   if (!phone || !phoneRegex.test(phone)) {
@@ -102,10 +129,21 @@ const validateRegistration = (req, res, next) => {
     errors.push("Address is required");
   }
 
+  // Parent fields validation for minors
+  if (isMinor) {
+    if (
+      !req.body.parent_name ||
+      !req.body.parent_lastname ||
+      !req.body.parent_phone
+    ) {
+      errors.push("Parent name, lastname, and phone are required for minors");
+    }
+  }
+
   if (errors.length > 0) {
     return res
       .status(400)
-      .json({ error: "Validation failed", details: errors });
+      .json({ error: "Validation failed: " + errors.join(", ") });
   }
 
   next();

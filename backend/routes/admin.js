@@ -334,18 +334,17 @@ router.get("/statistics", async (req, res) => {
   try {
     const stats = {};
 
-    // Total members
-    const totalMembers = await db.getQuery(
-      'SELECT COUNT(*) as count FROM users WHERE role = "member" AND is_active = 1',
+    // Total admins
+    const totalAdmins = await db.getQuery(
+      'SELECT COUNT(*) as count FROM users WHERE role = "admin"',
     );
-    stats.total_members = totalMembers.count;
+    stats.total_admins = totalAdmins.count;
 
-    // Active memberships
-    const activeMemberships = await db.getQuery(`
-      SELECT COUNT(*) as count FROM memberships
-      WHERE status = 'active' AND end_date >= date('now')
-    `);
-    stats.active_memberships = activeMemberships.count;
+    // Active admins
+    const activeAdmins = await db.getQuery(
+      'SELECT COUNT(*) as count FROM users WHERE role = "admin" AND is_active = 1',
+    );
+    stats.active_admins = activeAdmins.count;
 
     // Total sports
     const totalSports = await db.getQuery(
@@ -359,38 +358,36 @@ router.get("/statistics", async (req, res) => {
     );
     stats.total_sessions = totalSessions.count;
 
-    // Recent registrations (last 30 days)
-    const recentRegistrations = await db.getQuery(`
+    // Recent admin registrations (last 30 days)
+    const recentAdminRegistrations = await db.getQuery(`
       SELECT COUNT(*) as count FROM users
-      WHERE role = 'member' AND created_at >= date('now', '-30 days')
+      WHERE role = 'admin' AND created_at >= date('now', '-30 days')
     `);
-    stats.recent_registrations = recentRegistrations.count;
+    stats.recent_admin_registrations = recentAdminRegistrations.count;
 
-    // Payment statistics
-    const paymentStats = await db.getQuery(`
+    // System health stats
+    const systemStats = await db.getQuery(`
       SELECT
-        COUNT(*) as total_payments,
-        SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as total_revenue,
-        AVG(CASE WHEN status = 'completed' THEN amount ELSE NULL END) as avg_payment
-      FROM payments
+        COUNT(DISTINCT sport_id) as sports_with_schedules,
+        COUNT(*) as total_schedule_entries
+      FROM schedules WHERE is_active = 1
     `);
-    stats.payment_stats = {
-      total_payments: paymentStats.total_payments,
-      total_revenue: paymentStats.total_revenue || 0,
-      avg_payment: paymentStats.avg_payment || 0,
+    stats.system_stats = {
+      sports_with_schedules: systemStats.sports_with_schedules,
+      total_schedule_entries: systemStats.total_schedule_entries,
     };
 
-    // Monthly registrations trend (last 12 months)
-    const monthlyRegistrations = await db.getAllQuery(`
+    // Monthly admin registrations trend (last 12 months)
+    const monthlyAdminRegistrations = await db.getAllQuery(`
       SELECT
         strftime('%Y-%m', created_at) as month,
         COUNT(*) as count
       FROM users
-      WHERE role = 'member' AND created_at >= date('now', '-12 months')
+      WHERE role = 'admin' AND created_at >= date('now', '-12 months')
       GROUP BY strftime('%Y-%m', created_at)
       ORDER BY month
     `);
-    stats.monthly_registrations = monthlyRegistrations;
+    stats.monthly_admin_registrations = monthlyAdminRegistrations;
 
     res.json(stats);
   } catch (error) {
@@ -399,45 +396,44 @@ router.get("/statistics", async (req, res) => {
   }
 });
 
-// ===== USER MANAGEMENT =====
+// ===== ADMIN MANAGEMENT =====
 
-// Get all users (admin view)
-router.get("/users", async (req, res) => {
+// Get all admins (admin view)
+router.get("/admins", async (req, res) => {
   try {
-    const users = await db.getAllQuery(`
-      SELECT u.id, u.email, u.first_name, u.last_name, u.phone, u.role, u.is_active, u.created_at,
-             m.status as membership_status, m.end_date as membership_end
-      FROM users u
-      LEFT JOIN memberships m ON u.id = m.user_id AND m.status = 'active'
-      ORDER BY u.created_at DESC
+    const admins = await db.getAllQuery(`
+      SELECT id, email, first_name, last_name, phone, role, is_active, created_at
+      FROM users
+      WHERE role = 'admin'
+      ORDER BY created_at DESC
     `);
 
-    res.json(users);
+    res.json(admins);
   } catch (error) {
-    console.error("Error fetching users:", error);
-    res.status(500).json({ error: "Failed to fetch users" });
+    console.error("Error fetching admins:", error);
+    res.status(500).json({ error: "Failed to fetch admins" });
   }
 });
 
-// Update user status
-router.put("/users/:id/status", async (req, res) => {
+// Update admin status
+router.put("/admins/:id/status", async (req, res) => {
   try {
     const { id } = req.params;
     const { is_active } = req.body;
 
     const result = await db.runQuery(
-      "UPDATE users SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+      "UPDATE users SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND role = 'admin'",
       [is_active ? 1 : 0, id],
     );
 
     if (result.changes === 0) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "Admin not found" });
     }
 
-    res.json({ message: "User status updated successfully" });
+    res.json({ message: "Admin status updated successfully" });
   } catch (error) {
-    console.error("Error updating user status:", error);
-    res.status(500).json({ error: "Failed to update user status" });
+    console.error("Error updating admin status:", error);
+    res.status(500).json({ error: "Failed to update admin status" });
   }
 });
 

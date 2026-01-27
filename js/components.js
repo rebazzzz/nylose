@@ -75,12 +75,11 @@ async function handleLoginSubmit(e) {
       closeLoginModal();
       updateProfileButton();
 
-      // Redirect based on user role
+      // Only admins can log in now
       if (data.user.role === "admin") {
-        window.location.href = "admin.html";
+        window.location.href = "admin-dashboard.html";
       } else {
-        // Stay on current page or redirect to member dashboard if exists
-        location.reload();
+        alert("Endast administratörer kan logga in.");
       }
     } else {
       alert("Inloggning misslyckades: " + data.error);
