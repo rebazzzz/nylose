@@ -20,10 +20,19 @@ if (process.env.NODE_ENV === "production") {
 }
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || [
-      "http://localhost:3000",
-      "http://localhost:8000",
-    ],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      // Allow localhost for development
+      if (
+        !origin ||
+        origin === "null" ||
+        origin.startsWith("http://localhost")
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
@@ -35,7 +44,9 @@ const generalLimiter = rateLimit({
 });
 
 // No rate limiting for admin routes in development
-app.use(generalLimiter);
+if (process.env.NODE_ENV === "production") {
+  app.use(generalLimiter);
+}
 
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));

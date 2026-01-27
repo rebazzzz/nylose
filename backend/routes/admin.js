@@ -400,6 +400,7 @@ router.get("/statistics", async (req, res) => {
 
 // Get all members (admin view)
 router.get("/members", async (req, res) => {
+  console.log("Members endpoint called");
   try {
     const members = await db.getAllQuery(`
       SELECT id, email, first_name, last_name, personnummer, phone, address,
@@ -409,6 +410,7 @@ router.get("/members", async (req, res) => {
       ORDER BY created_at DESC
     `);
 
+    console.log("Members:", members.length);
     res.json(members);
   } catch (error) {
     console.error("Error fetching members:", error);

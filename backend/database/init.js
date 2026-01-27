@@ -153,10 +153,13 @@ class Database {
           (col) => col.name === "personnummer",
         );
         const hasAddress = columns.some((col) => col.name === "address");
+        const hasParentName = columns.some((col) => col.name === "parent_name");
+        const hasParentLastname = columns.some((col) => col.name === "parent_lastname");
+        const hasParentPhone = columns.some((col) => col.name === "parent_phone");
 
-        if (!hasPersonnummer || !hasAddress) {
+        if (!hasPersonnummer || !hasAddress || !hasParentName || !hasParentLastname || !hasParentPhone) {
           console.log(
-            "Adding personnummer and address columns to users table...",
+            "Adding missing columns to users table...",
           );
           let alterQueries = [];
 
@@ -168,6 +171,18 @@ class Database {
 
           if (!hasAddress) {
             alterQueries.push("ALTER TABLE users ADD COLUMN address TEXT");
+          }
+
+          if (!hasParentName) {
+            alterQueries.push("ALTER TABLE users ADD COLUMN parent_name TEXT");
+          }
+
+          if (!hasParentLastname) {
+            alterQueries.push("ALTER TABLE users ADD COLUMN parent_lastname TEXT");
+          }
+
+          if (!hasParentPhone) {
+            alterQueries.push("ALTER TABLE users ADD COLUMN parent_phone TEXT");
           }
 
           // Execute alter queries sequentially

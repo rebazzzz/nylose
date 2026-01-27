@@ -81,6 +81,15 @@ document.addEventListener("DOMContentLoaded", function () {
   loadDashboardCounts();
   loadSportsForSelect();
 
+  // Add click listeners to dashboard cards
+  const cards = document.querySelectorAll(".dashboard-card");
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const section = card.getAttribute("data-section");
+      showSection(section);
+    });
+  });
+
   // Initialize forms
   initializeForms();
 });
@@ -92,13 +101,13 @@ async function loadDashboardCounts() {
   try {
     const [membersResponse, sportsResponse, schedulesResponse] =
       await Promise.all([
-        fetch("http://localhost:3001/api/admin/members", {
+        fetch(`http://localhost:3001/api/admin/members?t=${Date.now()}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }),
-        fetch("http://localhost:3001/api/admin/sports", {
+        fetch(`http://localhost:3001/api/admin/sports?t=${Date.now()}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }),
-        fetch("http://localhost:3001/api/admin/schedules", {
+        fetch(`http://localhost:3001/api/admin/schedules?t=${Date.now()}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }),
       ]);
@@ -121,36 +130,7 @@ async function loadDashboardCounts() {
   }
 }
 
-/**
- * Show specific section
- */
-function showSection(sectionName) {
-  // Hide all sections
-  const sections = document.querySelectorAll(".content-section");
-  sections.forEach((section) => (section.style.display = "none"));
 
-  // Show selected section
-  const targetSection = document.getElementById(`${sectionName}-section`);
-  if (targetSection) {
-    targetSection.style.display = "block";
-
-    // Load data for the section
-    switch (sectionName) {
-      case "users":
-        loadUsers();
-        break;
-      case "sports":
-        loadSports();
-        break;
-      case "schedules":
-        loadSchedules();
-        break;
-      case "statistics":
-        loadStatistics();
-        break;
-    }
-  }
-}
 
 /**
  * Hide all sections
@@ -165,9 +145,12 @@ function hideAllSections() {
  */
 async function loadMembers() {
   try {
-    const response = await fetch("http://localhost:3001/api/admin/members", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
+    const response = await fetch(
+      `http://localhost:3001/api/admin/members?t=${Date.now()}`,
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      },
+    );
 
     if (!response.ok) throw new Error("Failed to fetch members");
 
