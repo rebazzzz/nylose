@@ -79,6 +79,10 @@ document.addEventListener("DOMContentLoaded", function () {
     showNotification(message, "error", title);
   }
 
+  function showWarning(message, title = "Varning") {
+    showNotification(message, "warning", title);
+  }
+
   if (personnummerInput) {
     personnummerInput.addEventListener("input", function (e) {
       // Allow only digits
@@ -190,7 +194,6 @@ document.addEventListener("DOMContentLoaded", function () {
             "Registrering genomförd! Kontrollera din e-post för bekräftelse.",
             "Registrering lyckades",
           );
-          window.location.href = "index.html";
         } else {
           showError(
             "Registrering misslyckades: " + registerResult.error,

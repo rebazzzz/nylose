@@ -396,6 +396,26 @@ router.get("/statistics", async (req, res) => {
   }
 });
 
+// ===== MEMBER MANAGEMENT =====
+
+// Get all members (admin view)
+router.get("/members", async (req, res) => {
+  try {
+    const members = await db.getAllQuery(`
+      SELECT id, email, first_name, last_name, personnummer, phone, address,
+             parent_name, parent_lastname, parent_phone, role, is_active, created_at
+      FROM users
+      WHERE role = 'member'
+      ORDER BY created_at DESC
+    `);
+
+    res.json(members);
+  } catch (error) {
+    console.error("Error fetching members:", error);
+    res.status(500).json({ error: "Failed to fetch members" });
+  }
+});
+
 // ===== ADMIN MANAGEMENT =====
 
 // Get all admins (admin view)
