@@ -6,23 +6,17 @@
                 <h3>Nylöse SportCenter</h3>
                 <p>“Träning ska inte vara en klassfråga.” <br><br>
                     Hos oss är alla välkomna, oavsett kön, bakgrund eller erfarenhet.</p>
-                <div class="social-links">
-                    <a target="_blank" href="https://www.facebook.com/NSCABK/" class="social-link"><i
-                            class="fab fa-facebook-f"></i></a>
-                    <a target="_blank" href="https://www.instagram.com/nylosegirls/" class="social-link"><i
-                            class="fab fa-instagram"></i></a>
-                    <a target="_blank" href="https://www.tiktok.com/@nylosegirls" class="social-link"><i
-                            class="fab fa-tiktok"></i></a>
+                <div class="social-links" id="social-links">
+                    <!-- Social media links will be loaded dynamically -->
                 </div>
-            </div> 
+            </div>
             <div class="footer-section">
                 <h3>Kontakt</h3>
                 <p>Bergsgårdsgärdet 89C</p>
                 <p>424 32 Angered</p>
-                <p id="telnr"><a href="tel:072-910 25 75">Tel 1: <span>072-910 25 75</span></a></p>
-                <p id="telnr"><a href="tel:070-042 42 21">Tel 2: <span>070-042 42 21 </span></a></p>
-
-                <p id="telnr"><a href="mailto:nylosesportcenter@gmail.com"><span></span>nylosesportcenter@gmail.com</span></a></p>
+                <div id="contact-info">
+                    <!-- Contact information will be loaded dynamically -->
+                </div>
             </div>
             <div class="footer-section">
                 <h3>Hitta oss</h3>
@@ -35,4 +29,86 @@
             <p>&copy; Rebaz är big daddy</p>
         </div>
     </div>
+
+    <script>
+        // Load social media links dynamically
+        async function loadSocialMediaLinks() {
+            try {
+                const response = await fetch('http://localhost:3001/api/public/social-media');
+                if (!response.ok) {
+                    console.warn('Failed to load social media links');
+                    return;
+                }
+                const links = await response.json();
+                const container = document.getElementById('social-links');
+
+                if (links.length === 0) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                container.innerHTML = links
+                    .sort((a, b) => a.display_order - b.display_order)
+                    .map(link => `
+                        <a target="_blank" href="${link.url}" class="social-link">
+                            <i class="${link.icon_class}"></i>
+                        </a>
+                    `)
+                    .join('');
+            } catch (error) {
+                console.error('Error loading social media links:', error);
+                // Fallback to default links if API fails
+                const container = document.getElementById('social-links');
+                container.innerHTML = `
+                    <a target="_blank" href="https://www.facebook.com/NSCABK/" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a target="_blank" href="https://www.instagram.com/nylosegirls/" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a target="_blank" href="https://www.tiktok.com/@nylosegirls" class="social-link"><i class="fab fa-tiktok"></i></a>
+                `;
+            }
+        }
+
+        // Load contact information dynamically
+        async function loadContactInfo() {
+            try {
+                const response = await fetch('http://localhost:3001/api/public/contact-info');
+                if (!response.ok) {
+                    console.warn('Failed to load contact information');
+                    return;
+                }
+                const contacts = await response.json();
+                const container = document.getElementById('contact-info');
+
+                if (contacts.length === 0) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                container.innerHTML = contacts
+                    .sort((a, b) => a.display_order - b.display_order)
+                    .map(contact => {
+                        if (contact.href) {
+                            return `<p id="telnr"><a href="${contact.href}">${contact.label}: <span>${contact.value}</span></a></p>`;
+                        } else {
+                            return `<p>${contact.label}: <span>${contact.value}</span></p>`;
+                        }
+                    })
+                    .join('');
+            } catch (error) {
+                console.error('Error loading contact information:', error);
+                // Fallback to default contact info if API fails
+                const container = document.getElementById('contact-info');
+                container.innerHTML = `
+                    <p id="telnr"><a href="tel:072-910 25 75">Tel 1: <span>072-910 25 75</span></a></p>
+                    <p id="telnr"><a href="tel:070-042 42 21">Tel 2: <span>070-042 42 21 </span></a></p>
+                    <p id="telnr"><a href="mailto:nylosesportcenter@gmail.com"><span></span>nylosesportcenter@gmail.com</span></a></p>
+                `;
+            }
+        }
+
+        // Load social media links and contact info when the page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            loadSocialMediaLinks();
+            loadContactInfo();
+        });
+    </script>
 </footer>

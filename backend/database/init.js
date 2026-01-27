@@ -115,6 +115,31 @@ class Database {
           additional_data TEXT, -- JSON for extra info
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )`,
+
+        // Social media links table
+        `CREATE TABLE IF NOT EXISTS social_media_links (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          platform TEXT NOT NULL, -- 'facebook', 'instagram', 'tiktok', etc.
+          url TEXT NOT NULL,
+          icon_class TEXT NOT NULL, -- FontAwesome icon class
+          display_order INTEGER DEFAULT 0,
+          is_active BOOLEAN DEFAULT 1,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`,
+
+        // Contact information table
+        `CREATE TABLE IF NOT EXISTS contact_info (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          type TEXT NOT NULL, -- 'phone', 'email', 'address'
+          label TEXT NOT NULL, -- Display label
+          value TEXT NOT NULL, -- The actual contact value
+          href TEXT, -- Optional href for links (tel:, mailto:)
+          display_order INTEGER DEFAULT 0,
+          is_active BOOLEAN DEFAULT 1,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`,
       ];
 
       let completed = 0;
@@ -154,13 +179,21 @@ class Database {
         );
         const hasAddress = columns.some((col) => col.name === "address");
         const hasParentName = columns.some((col) => col.name === "parent_name");
-        const hasParentLastname = columns.some((col) => col.name === "parent_lastname");
-        const hasParentPhone = columns.some((col) => col.name === "parent_phone");
+        const hasParentLastname = columns.some(
+          (col) => col.name === "parent_lastname",
+        );
+        const hasParentPhone = columns.some(
+          (col) => col.name === "parent_phone",
+        );
 
-        if (!hasPersonnummer || !hasAddress || !hasParentName || !hasParentLastname || !hasParentPhone) {
-          console.log(
-            "Adding missing columns to users table...",
-          );
+        if (
+          !hasPersonnummer ||
+          !hasAddress ||
+          !hasParentName ||
+          !hasParentLastname ||
+          !hasParentPhone
+        ) {
+          console.log("Adding missing columns to users table...");
           let alterQueries = [];
 
           if (!hasPersonnummer) {
@@ -178,7 +211,9 @@ class Database {
           }
 
           if (!hasParentLastname) {
-            alterQueries.push("ALTER TABLE users ADD COLUMN parent_lastname TEXT");
+            alterQueries.push(
+              "ALTER TABLE users ADD COLUMN parent_lastname TEXT",
+            );
           }
 
           if (!hasParentPhone) {
@@ -370,6 +405,91 @@ class Database {
               ],
             );
           }
+        }
+      }
+
+      // Seed initial social media links
+      const socialMediaLinks = [
+        {
+          platform: "facebook",
+          url: "https://www.facebook.com/NSCABK/",
+          icon_class: "fab fa-facebook-f",
+          display_order: 1,
+        },
+        {
+          platform: "instagram",
+          url: "https://www.instagram.com/nylosegirls/",
+          icon_class: "fab fa-instagram",
+          display_order: 2,
+        },
+        {
+          platform: "tiktok",
+          url: "https://www.tiktok.com/@nylosegirls",
+          icon_class: "fab fa-tiktok",
+          display_order: 3,
+        },
+      ];
+
+      for (const link of socialMediaLinks) {
+        const existingLink = await this.getQuery(
+          "SELECT id FROM social_media_links WHERE platform = ?",
+          [link.platform],
+        );
+        if (!existingLink) {
+          await this.runQuery(
+            "INSERT INTO social_media_links (platform, url, icon_class, display_order) VALUES (?, ?, ?, ?)",
+            [link.platform, link.url, link.icon_class, link.display_order],
+          );
+        }
+      }
+
+      // Seed initial contact information
+      const contactInfo = [
+        {
+          type: "address",
+          label: "Adress",
+          value: "Bergsgårdsgärdet 89C, 424 32 Angered",
+          display_order: 1,
+        },
+        {
+          type: "phone",
+          label: "Tel 1",
+          value: "072-910 25 75",
+          href: "tel:072-910 25 75",
+          display_order: 2,
+        },
+        {
+          type: "phone",
+          label: "Tel 2",
+          value: "070-042 42 21",
+          href: "tel:070-042 42 21",
+          display_order: 3,
+        },
+        {
+          type: "email",
+          label: "E-post",
+          value: "nylosesportcenter@gmail.com",
+          href: "mailto:nylosesportcenter@gmail.com",
+          display_order: 4,
+        },
+      ];
+
+      for (const contact of contactInfo) {
+        const existingContact = await this.getQuery(
+          "SELECT id FROM contact_info WHERE type = ? AND value = ?",
+          [contact.type, contact.value],
+        );
+        if (!existingContact) {
+          await this.runQuery(
+            "INSERT INTO contact_info (type, label, value, href, display_order) VALUES (?, ?, ?, ?, ?)",
+            [
+              contact.type,
+              contact.label,
+              contact.value,
+              contact.href || null,
+              contact.display_order,
+            ],
+          );
         }
       }
 

@@ -327,6 +327,177 @@ router.delete("/schedules/:id", async (req, res) => {
   }
 });
 
+// ===== SOCIAL MEDIA LINKS MANAGEMENT =====
+
+// Get all social media links
+router.get("/social-media", async (req, res) => {
+  try {
+    const links = await db.getAllQuery(
+      "SELECT * FROM social_media_links ORDER BY display_order, platform",
+    );
+    res.json(links);
+  } catch (error) {
+    console.error("Error fetching social media links:", error);
+    res.status(500).json({ error: "Failed to fetch social media links" });
+  }
+});
+
+// Add new social media link
+router.post("/social-media", async (req, res) => {
+  try {
+    const { platform, url, icon_class, display_order } = req.body;
+
+    if (!platform || !url || !icon_class) {
+      return res.status(400).json({
+        error: "Platform, URL, and icon class are required",
+      });
+    }
+
+    const result = await db.runQuery(
+      "INSERT INTO social_media_links (platform, url, icon_class, display_order) VALUES (?, ?, ?, ?)",
+      [platform, url, icon_class, display_order || 0],
+    );
+
+    res.status(201).json({
+      id: result.lastID,
+      message: "Social media link added successfully",
+    });
+  } catch (error) {
+    console.error("Error adding social media link:", error);
+    res.status(500).json({ error: "Failed to add social media link" });
+  }
+});
+
+// Update social media link
+router.put("/social-media/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { platform, url, icon_class, display_order, is_active } = req.body;
+
+    if (!platform || !url || !icon_class) {
+      return res.status(400).json({
+        error: "Platform, URL, and icon class are required",
+      });
+    }
+
+    await db.runQuery(
+      "UPDATE social_media_links SET platform = ?, url = ?, icon_class = ?, display_order = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+      [platform, url, icon_class, display_order || 0, !!is_active, id],
+    );
+
+    res.json({ message: "Social media link updated successfully" });
+  } catch (error) {
+    console.error("Error updating social media link:", error);
+    res.status(500).json({ error: "Failed to update social media link" });
+  }
+});
+
+// Delete social media link
+router.delete("/social-media/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await db.runQuery(
+      "DELETE FROM social_media_links WHERE id = ?",
+      [id],
+    );
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: "Social media link not found" });
+    }
+
+    res.json({ message: "Social media link deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting social media link:", error);
+    res.status(500).json({ error: "Failed to delete social media link" });
+  }
+});
+
+// ===== CONTACT INFORMATION MANAGEMENT =====
+
+// Get all contact information
+router.get("/contact-info", async (req, res) => {
+  try {
+    const contacts = await db.getAllQuery(
+      "SELECT * FROM contact_info ORDER BY display_order, type",
+    );
+    res.json(contacts);
+  } catch (error) {
+    console.error("Error fetching contact information:", error);
+    res.status(500).json({ error: "Failed to fetch contact information" });
+  }
+});
+
+// Add new contact information
+router.post("/contact-info", async (req, res) => {
+  try {
+    const { type, label, value, href, display_order } = req.body;
+
+    if (!type || !label || !value) {
+      return res.status(400).json({
+        error: "Type, label, and value are required",
+      });
+    }
+
+    const result = await db.runQuery(
+      "INSERT INTO contact_info (type, label, value, href, display_order) VALUES (?, ?, ?, ?, ?)",
+      [type, label, value, href || null, display_order || 0],
+    );
+
+    res.status(201).json({
+      id: result.lastID,
+      message: "Contact information added successfully",
+    });
+  } catch (error) {
+    console.error("Error adding contact information:", error);
+    res.status(500).json({ error: "Failed to add contact information" });
+  }
+});
+
+// Update contact information
+router.put("/contact-info/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { type, label, value, href, display_order, is_active } = req.body;
+
+    if (!type || !label || !value) {
+      return res.status(400).json({
+        error: "Type, label, and value are required",
+      });
+    }
+
+    await db.runQuery(
+      "UPDATE contact_info SET type = ?, label = ?, value = ?, href = ?, display_order = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+      [type, label, value, href || null, display_order || 0, !!is_active, id],
+    );
+
+    res.json({ message: "Contact information updated successfully" });
+  } catch (error) {
+    console.error("Error updating contact information:", error);
+    res.status(500).json({ error: "Failed to update contact information" });
+  }
+});
+
+// Delete contact information
+router.delete("/contact-info/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await db.runQuery("DELETE FROM contact_info WHERE id = ?", [
+      id,
+    ]);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: "Contact information not found" });
+    }
+
+    res.json({ message: "Contact information deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting contact information:", error);
+    res.status(500).json({ error: "Failed to delete contact information" });
+  }
+});
+
 // ===== STATISTICS =====
 
 // Get dashboard statistics

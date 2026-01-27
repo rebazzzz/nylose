@@ -81,6 +81,36 @@
                     </div>
                 </div>
 
+                <div class="dashboard-card" data-section="social-media">
+                    <div class="card-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Sociala medier</h3>
+                        <p id="social-media-count">Laddar...</p>
+                    </div>
+                    <div class="card-action">
+                        <button class="btn" onclick="showSection('social-media')">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="dashboard-card" data-section="contact-info">
+                    <div class="card-icon">
+                        <i class="fas fa-address-book"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Kontaktinfo</h3>
+                        <p id="contact-info-count">Laddar...</p>
+                    </div>
+                    <div class="card-action">
+                        <button class="btn" onclick="showSection('contact-info')">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="dashboard-card" data-section="statistics">
                     <div class="card-icon">
                         <i class="fas fa-chart-bar"></i>
@@ -192,6 +222,77 @@
                                 <tbody id="sports-tbody">
                                     <tr>
                                         <td colspan="5">Laddar sporter...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Media Section -->
+                <div id="social-media-section" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Sociala medier</h2>
+                        <button class="btn btn-secondary" onclick="hideAllSections()">
+                            <i class="fas fa-arrow-left"></i> Tillbaka
+                        </button>
+                        <button class="btn btn-primary" onclick="showAddSocialMediaModal()">
+                            <i class="fas fa-plus"></i> Lägg till länk
+                        </button>
+                    </div>
+                    <div class="section-content">
+                        <div class="data-table">
+                            <table id="social-media-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Plattform</th>
+                                        <th>URL</th>
+                                        <th>Ikon</th>
+                                        <th>Ordning</th>
+                                        <th>Status</th>
+                                        <th>Åtgärder</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="social-media-tbody">
+                                    <tr>
+                                        <td colspan="7">Laddar sociala medier...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Info Section -->
+                <div id="contact-info-section" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Kontaktinformation</h2>
+                        <button class="btn btn-secondary" onclick="hideAllSections()">
+                            <i class="fas fa-arrow-left"></i> Tillbaka
+                        </button>
+                        <button class="btn btn-primary" onclick="showAddContactInfoModal()">
+                            <i class="fas fa-plus"></i> Lägg till kontaktinfo
+                        </button>
+                    </div>
+                    <div class="section-content">
+                        <div class="data-table">
+                            <table id="contact-info-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Typ</th>
+                                        <th>Etikett</th>
+                                        <th>Värde</th>
+                                        <th>Länk</th>
+                                        <th>Ordning</th>
+                                        <th>Status</th>
+                                        <th>Åtgärder</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contact-info-tbody">
+                                    <tr>
+                                        <td colspan="8">Laddar kontaktinformation...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -420,6 +521,200 @@
                     <button type="submit" class="btn btn-primary">Skapa admin</button>
                     <button type="button" class="btn btn-secondary"
                         onclick="closeModal('add-admin-modal')">Avbryt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Social Media Modal -->
+    <div id="add-social-media-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Lägg till social medie-länk</h3>
+                <span class="modal-close" onclick="closeModal('add-social-media-modal')">&times;</span>
+            </div>
+            <form id="add-social-media-form">
+                <div class="form-group">
+                    <label for="social-media-platform">Plattform:</label>
+                    <select id="social-media-platform" required>
+                        <option value="">Välj plattform...</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="twitter">Twitter</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="linkedin">LinkedIn</option>
+                        <option value="other">Annan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="social-media-url">URL:</label>
+                    <input type="url" id="social-media-url" required placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="social-media-icon">Ikon-klass:</label>
+                    <input type="text" id="social-media-icon" required placeholder="fab fa-facebook-f">
+                    <small>Använd FontAwesome ikon-klass (t.ex. fab fa-facebook-f)</small>
+                </div>
+                <div class="form-group">
+                    <label for="social-media-order">Visningsordning:</label>
+                    <input type="number" id="social-media-order" min="0" value="0">
+                    <small>Lägre nummer visas först (0 = högst prioritet)</small>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Spara</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('add-social-media-modal')">Avbryt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Social Media Modal -->
+    <div id="edit-social-media-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Redigera social medie-länk</h3>
+                <span class="modal-close" onclick="closeModal('edit-social-media-modal')">&times;</span>
+            </div>
+            <form id="edit-social-media-form">
+                <input type="hidden" id="edit-social-media-id">
+                <div class="form-group">
+                    <label for="edit-social-media-platform">Plattform:</label>
+                    <select id="edit-social-media-platform" required>
+                        <option value="">Välj plattform...</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="twitter">Twitter</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="linkedin">LinkedIn</option>
+                        <option value="other">Annan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-social-media-url">URL:</label>
+                    <input type="url" id="edit-social-media-url" required placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="edit-social-media-icon">Ikon-klass:</label>
+                    <input type="text" id="edit-social-media-icon" required placeholder="fab fa-facebook-f">
+                    <small>Använd FontAwesome ikon-klass (t.ex. fab fa-facebook-f)</small>
+                </div>
+                <div class="form-group">
+                    <label for="edit-social-media-order">Visningsordning:</label>
+                    <input type="number" id="edit-social-media-order" min="0" value="0">
+                    <small>Lägre nummer visas först (0 = högst prioritet)</small>
+                </div>
+                <div class="form-group">
+                    <label for="edit-social-media-active">
+                        <input type="checkbox" id="edit-social-media-active" checked>
+                        Aktiv
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Uppdatera</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('edit-social-media-modal')">Avbryt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Contact Info Modal -->
+    <div id="add-contact-info-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Lägg till kontaktinformation</h3>
+                <span class="modal-close" onclick="closeModal('add-contact-info-modal')">&times;</span>
+            </div>
+            <form id="add-contact-info-form">
+                <div class="form-group">
+                    <label for="contact-info-type">Typ:</label>
+                    <select id="contact-info-type" required>
+                        <option value="">Välj typ...</option>
+                        <option value="phone">Telefon</option>
+                        <option value="email">E-post</option>
+                        <option value="address">Adress</option>
+                        <option value="other">Annan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="contact-info-label">Etikett:</label>
+                    <input type="text" id="contact-info-label" required placeholder="t.ex. Tel 1, E-post">
+                </div>
+                <div class="form-group">
+                    <label for="contact-info-value">Värde:</label>
+                    <input type="text" id="contact-info-value" required placeholder="t.ex. 072-910 25 75">
+                </div>
+                <div class="form-group">
+                    <label for="contact-info-href">Länk (valfritt):</label>
+                    <input type="text" id="contact-info-href"
+                        placeholder="t.ex. tel:072-910 25 75 eller mailto:email@example.com">
+                    <small>Lämna tomt om ingen länk behövs</small>
+                </div>
+                <div class="form-group">
+                    <label for="contact-info-order">Visningsordning:</label>
+                    <input type="number" id="contact-info-order" min="0" value="0">
+                    <small>Lägre nummer visas först (0 = högst prioritet)</small>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Spara</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('add-contact-info-modal')">Avbryt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Contact Info Modal -->
+    <div id="edit-contact-info-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Redigera kontaktinformation</h3>
+                <span class="modal-close" onclick="closeModal('edit-contact-info-modal')">&times;</span>
+            </div>
+            <form id="edit-contact-info-form">
+                <input type="hidden" id="edit-contact-info-id">
+                <div class="form-group">
+                    <label for="edit-contact-info-type">Typ:</label>
+                    <select id="edit-contact-info-type" required>
+                        <option value="">Välj typ...</option>
+                        <option value="phone">Telefon</option>
+                        <option value="email">E-post</option>
+                        <option value="address">Adress</option>
+                        <option value="other">Annan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-contact-info-label">Etikett:</label>
+                    <input type="text" id="edit-contact-info-label" required placeholder="t.ex. Tel 1, E-post">
+                </div>
+                <div class="form-group">
+                    <label for="edit-contact-info-value">Värde:</label>
+                    <input type="text" id="edit-contact-info-value" required placeholder="t.ex. 072-910 25 75">
+                </div>
+                <div class="form-group">
+                    <label for="edit-contact-info-href">Länk (valfritt):</label>
+                    <input type="text" id="edit-contact-info-href"
+                        placeholder="t.ex. tel:072-910 25 75 eller mailto:email@example.com">
+                    <small>Lämna tomt om ingen länk behövs</small>
+                </div>
+                <div class="form-group">
+                    <label for="edit-contact-info-order">Visningsordning:</label>
+                    <input type="number" id="edit-contact-info-order" min="0" value="0">
+                    <small>Lägre nummer visas först (0 = högst prioritet)</small>
+                </div>
+                <div class="form-group">
+                    <label for="edit-contact-info-active">
+                        <input type="checkbox" id="edit-contact-info-active" checked>
+                        Aktiv
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Uppdatera</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('edit-contact-info-modal')">Avbryt</button>
                 </div>
             </form>
         </div>

@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/sports", async (req, res) => {
   try {
     const sports = await db.getAllQuery(
-      "SELECT id, name, description, age_groups FROM sports WHERE is_active = 1 ORDER BY name"
+      "SELECT id, name, description, age_groups FROM sports WHERE is_active = 1 ORDER BY name",
     );
 
     // Parse age_groups JSON
@@ -76,7 +76,7 @@ router.get("/schedule/:sport", async (req, res) => {
         END,
         s.start_time
     `,
-      [sportName]
+      [sportName],
     );
 
     res.json(schedule);
@@ -99,6 +99,32 @@ router.get("/pricing", async (req, res) => {
   } catch (error) {
     console.error("Error fetching pricing:", error);
     res.status(500).json({ error: "Failed to fetch pricing information" });
+  }
+});
+
+// Get active social media links
+router.get("/social-media", async (req, res) => {
+  try {
+    const links = await db.getAllQuery(
+      "SELECT platform, url, icon_class FROM social_media_links WHERE is_active = 1 ORDER BY display_order, platform",
+    );
+    res.json(links);
+  } catch (error) {
+    console.error("Error fetching social media links:", error);
+    res.status(500).json({ error: "Failed to fetch social media links" });
+  }
+});
+
+// Get active contact information
+router.get("/contact-info", async (req, res) => {
+  try {
+    const contacts = await db.getAllQuery(
+      "SELECT type, label, value, href FROM contact_info WHERE is_active = 1 ORDER BY display_order, type",
+    );
+    res.json(contacts);
+  } catch (error) {
+    console.error("Error fetching contact information:", error);
+    res.status(500).json({ error: "Failed to fetch contact information" });
   }
 });
 

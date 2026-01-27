@@ -55,8 +55,8 @@ app.use(express.urlencoded({ extended: true }));
 // Static files for uploads (if needed)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Remove static file serving - frontend should be served by the frontend server only
-// app.use(express.static(path.join(__dirname, "..")));
+// Serve static files from the parent directory (frontend)
+app.use(express.static(path.join(__dirname, "..")));
 
 // Import routes
 const authRoutes = require("./routes/auth");

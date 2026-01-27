@@ -26,6 +26,12 @@ function showSection(sectionName) {
       case "schedules":
         loadSchedules();
         break;
+      case "social-media":
+        loadSocialMedia();
+        break;
+      case "contact-info":
+        loadContactInfo();
+        break;
       case "statistics":
         loadStatistics();
         break;
@@ -48,6 +54,14 @@ function showAddScheduleModal() {
 
 function showAddAdminModal() {
   document.getElementById("add-admin-modal").style.display = "block";
+}
+
+function showAddSocialMediaModal() {
+  document.getElementById("add-social-media-modal").style.display = "block";
+}
+
+function showAddContactInfoModal() {
+  document.getElementById("add-contact-info-modal").style.display = "block";
 }
 
 function closeModal(modalId) {
@@ -99,22 +113,35 @@ document.addEventListener("DOMContentLoaded", function () {
  */
 async function loadDashboardCounts() {
   try {
-    const [membersResponse, sportsResponse, schedulesResponse] =
-      await Promise.all([
-        fetch(`http://localhost:3001/api/admin/members?t=${Date.now()}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }),
-        fetch(`http://localhost:3001/api/admin/sports?t=${Date.now()}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }),
-        fetch(`http://localhost:3001/api/admin/schedules?t=${Date.now()}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }),
-      ]);
+    const [
+      membersResponse,
+      sportsResponse,
+      schedulesResponse,
+      socialMediaResponse,
+      contactInfoResponse,
+    ] = await Promise.all([
+      fetch(`http://localhost:3001/api/admin/members?t=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }),
+      fetch(`http://localhost:3001/api/admin/sports?t=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }),
+      fetch(`http://localhost:3001/api/admin/schedules?t=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }),
+      fetch(`http://localhost:3001/api/admin/social-media?t=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }),
+      fetch(`http://localhost:3001/api/admin/contact-info?t=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }),
+    ]);
 
     const members = await membersResponse.json();
     const sports = await sportsResponse.json();
     const schedules = await schedulesResponse.json();
+    const socialMedia = await socialMediaResponse.json();
+    const contactInfo = await contactInfoResponse.json();
 
     document.getElementById("members-count").textContent =
       `${members.length} medlemmar`;
@@ -122,15 +149,21 @@ async function loadDashboardCounts() {
       `${sports.length} sporter`;
     document.getElementById("schedules-count").textContent =
       `${schedules.length} scheman`;
+    document.getElementById("social-media-count").textContent =
+      `${socialMedia.length} länkar`;
+    document.getElementById("contact-info-count").textContent =
+      `${contactInfo.length} kontakter`;
   } catch (error) {
     console.error("Error loading dashboard counts:", error);
     document.getElementById("members-count").textContent = "Kunde inte ladda";
     document.getElementById("sports-count").textContent = "Kunde inte ladda";
     document.getElementById("schedules-count").textContent = "Kunde inte ladda";
+    document.getElementById("social-media-count").textContent =
+      "Kunde inte ladda";
+    document.getElementById("contact-info-count").textContent =
+      "Kunde inte ladda";
   }
 }
-
-
 
 /**
  * Hide all sections
@@ -300,6 +333,58 @@ async function loadSports() {
 }
 
 /**
+ * Load social media data
+ */
+async function loadSocialMedia() {
+  try {
+    const response = await fetch(
+      "http://localhost:3001/api/admin/social-media",
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      },
+    );
+
+    if (!response.ok) throw new Error("Failed to fetch social media links");
+
+    const links = await response.json();
+    const tbody = document.getElementById("social-media-tbody");
+
+    if (links.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="7">Inga sociala medier tillgängliga</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = links
+      .map(
+        (link) => `
+            <tr>
+                <td>${link.id}</td>
+                <td>${link.platform}</td>
+                <td><a href="${link.url}" target="_blank">${link.url}</a></td>
+                <td><i class="${link.icon_class}"></i> ${link.icon_class}</td>
+                <td>${link.display_order}</td>
+                <td>${link.is_active ? '<span class="status-active">Aktiv</span>' : '<span class="status-inactive">Inaktiv</span>'}</td>
+                <td>
+                    <button class="btn btn-small" onclick="editSocialMedia(${link.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-small btn-danger" onclick="deleteSocialMedia(${link.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `,
+      )
+      .join("");
+  } catch (error) {
+    console.error("Error loading social media:", error);
+    document.getElementById("social-media-tbody").innerHTML =
+      '<tr><td colspan="7">Kunde inte ladda sociala medier</td></tr>';
+  }
+}
+
+/**
  * Load schedules data
  */
 async function loadSchedules() {
@@ -344,6 +429,111 @@ async function loadSchedules() {
     console.error("Error loading schedules:", error);
     document.getElementById("schedules-tbody").innerHTML =
       '<tr><td colspan="7">Kunde inte ladda schema</td></tr>';
+  }
+}
+
+/**
+ * Load social media data
+ */
+async function loadSocialMedia() {
+  try {
+    const response = await fetch(
+      "http://localhost:3001/api/admin/social-media",
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      },
+    );
+
+    if (!response.ok) throw new Error("Failed to fetch social media links");
+
+    const links = await response.json();
+    const tbody = document.getElementById("social-media-tbody");
+
+    if (links.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="7">Inga sociala medier tillgängliga</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = links
+      .map(
+        (link) => `
+            <tr>
+                <td>${link.id}</td>
+                <td>${link.platform}</td>
+                <td><a href="${link.url}" target="_blank">${link.url}</a></td>
+                <td><i class="${link.icon_class}"></i> ${link.icon_class}</td>
+                <td>${link.display_order}</td>
+                <td>${link.is_active ? '<span class="status-active">Aktiv</span>' : '<span class="status-inactive">Inaktiv</span>'}</td>
+                <td>
+                    <button class="btn btn-small" onclick="editSocialMedia(${link.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-small btn-danger" onclick="deleteSocialMedia(${link.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `,
+      )
+      .join("");
+  } catch (error) {
+    console.error("Error loading social media:", error);
+    document.getElementById("social-media-tbody").innerHTML =
+      '<tr><td colspan="7">Kunde inte ladda sociala medier</td></tr>';
+  }
+}
+
+/**
+ * Load contact info data
+ */
+async function loadContactInfo() {
+  try {
+    const response = await fetch(
+      "http://localhost:3001/api/admin/contact-info",
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      },
+    );
+
+    if (!response.ok) throw new Error("Failed to fetch contact information");
+
+    const contacts = await response.json();
+    const tbody = document.getElementById("contact-info-tbody");
+
+    if (contacts.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="8">Ingen kontaktinformation tillgänglig</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = contacts
+      .map(
+        (contact) => `
+            <tr>
+                <td>${contact.id}</td>
+                <td>${contact.type}</td>
+                <td>${contact.label}</td>
+                <td>${contact.value}</td>
+                <td>${contact.href || "-"}</td>
+                <td>${contact.display_order}</td>
+                <td>${contact.is_active ? '<span class="status-active">Aktiv</span>' : '<span class="status-inactive">Inaktiv</span>'}</td>
+                <td>
+                    <button class="btn btn-small" onclick="editContactInfo(${contact.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-small btn-danger" onclick="deleteContactInfo(${contact.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `,
+      )
+      .join("");
+  } catch (error) {
+    console.error("Error loading contact info:", error);
+    document.getElementById("contact-info-tbody").innerHTML =
+      '<tr><td colspan="8">Kunde inte ladda kontaktinformation</td></tr>';
   }
 }
 
@@ -524,6 +714,74 @@ async function deleteSchedule(scheduleId) {
 }
 
 /**
+ * Edit social media
+ */
+async function editSocialMedia(linkId) {
+  try {
+    const response = await fetch(
+      "http://localhost:3001/api/admin/social-media",
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      },
+    );
+
+    if (!response.ok) throw new Error("Failed to fetch social media links");
+
+    const links = await response.json();
+    const link = links.find((l) => l.id === linkId);
+
+    if (!link) throw new Error("Social media link not found");
+
+    document.getElementById("edit-social-media-id").value = link.id;
+    document.getElementById("edit-social-media-platform").value = link.platform;
+    document.getElementById("edit-social-media-url").value = link.url;
+    document.getElementById("edit-social-media-icon").value = link.icon_class;
+    document.getElementById("edit-social-media-order").value =
+      link.display_order;
+    document.getElementById("edit-social-media-active").checked =
+      link.is_active;
+
+    document.getElementById("edit-social-media-modal").style.display = "block";
+  } catch (error) {
+    console.error("Error loading social media for edit:", error);
+    showError("Kunde inte ladda social medie-länk för redigering");
+  }
+}
+
+/**
+ * Delete social media
+ */
+async function deleteSocialMedia(linkId) {
+  showConfirm(
+    "Är du säker på att du vill ta bort denna social medie-länk?",
+    "Bekräfta borttagning",
+    async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/admin/social-media/${linkId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
+
+        if (!response.ok) throw new Error("Failed to delete social media link");
+
+        // Reload social media
+        loadSocialMedia();
+        loadDashboardCounts();
+        showSuccess("Social medie-länken har tagits bort");
+      } catch (error) {
+        console.error("Error deleting social media link:", error);
+        showError("Kunde inte ta bort social medie-länk");
+      }
+    },
+  );
+}
+
+/**
  * Show add sport modal
  */
 function showAddSportModal() {
@@ -601,6 +859,115 @@ async function editSchedule(scheduleId) {
     console.error("Error loading schedule for edit:", error);
     showError("Kunde inte ladda schema för redigering");
   }
+}
+
+/**
+ * Edit social media
+ */
+async function editSocialMedia(linkId) {
+  try {
+    const response = await fetch(
+      "http://localhost:3001/api/admin/social-media",
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      },
+    );
+
+    if (!response.ok) throw new Error("Failed to fetch social media links");
+
+    const links = await response.json();
+    const link = links.find((l) => l.id === linkId);
+
+    if (!link) throw new Error("Social media link not found");
+
+    // Populate edit form
+    document.getElementById("edit-social-media-id").value = link.id;
+    document.getElementById("edit-social-media-platform").value = link.platform;
+    document.getElementById("edit-social-media-url").value = link.url;
+    document.getElementById("edit-social-media-icon").value = link.icon_class;
+    document.getElementById("edit-social-media-order").value =
+      link.display_order;
+    document.getElementById("edit-social-media-active").checked =
+      link.is_active;
+
+    // Show modal
+    document.getElementById("edit-social-media-modal").style.display = "block";
+  } catch (error) {
+    console.error("Error loading social media link for edit:", error);
+    showError("Kunde inte ladda social medie-länk för redigering");
+  }
+}
+
+/**
+ * Edit contact info
+ */
+async function editContactInfo(contactId) {
+  try {
+    const response = await fetch(
+      "http://localhost:3001/api/admin/contact-info",
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      },
+    );
+
+    if (!response.ok) throw new Error("Failed to fetch contact information");
+
+    const contacts = await response.json();
+    const contact = contacts.find((c) => c.id === contactId);
+
+    if (!contact) throw new Error("Contact info not found");
+
+    // Populate edit form
+    document.getElementById("edit-contact-info-id").value = contact.id;
+    document.getElementById("edit-contact-info-type").value = contact.type;
+    document.getElementById("edit-contact-info-label").value = contact.label;
+    document.getElementById("edit-contact-info-value").value = contact.value;
+    document.getElementById("edit-contact-info-href").value =
+      contact.href || "";
+    document.getElementById("edit-contact-info-order").value =
+      contact.display_order;
+    document.getElementById("edit-contact-info-active").checked =
+      contact.is_active;
+
+    // Show modal
+    document.getElementById("edit-contact-info-modal").style.display = "block";
+  } catch (error) {
+    console.error("Error loading contact info for edit:", error);
+    showError("Kunde inte ladda kontaktinformation för redigering");
+  }
+}
+
+/**
+ * Delete contact info
+ */
+async function deleteContactInfo(contactId) {
+  showConfirm(
+    "Är du säker på att du vill ta bort denna kontaktinformation?",
+    "Bekräfta borttagning",
+    async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/admin/contact-info/${contactId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
+
+        if (!response.ok) throw new Error("Failed to delete contact info");
+
+        // Reload contact info
+        loadContactInfo();
+        loadDashboardCounts();
+        showSuccess("Kontaktinformationen har tagits bort");
+      } catch (error) {
+        console.error("Error deleting contact info:", error);
+        showError("Kunde inte ta bort kontaktinformation");
+      }
+    },
+  );
 }
 
 /**
@@ -939,6 +1306,174 @@ function initializeForms() {
       } catch (error) {
         console.error("Error adding admin:", error);
         showError("Kunde inte lägga till administratör");
+      }
+    });
+
+  // Add social media form
+  document
+    .getElementById("add-social-media-form")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const socialMediaData = {
+        platform: document.getElementById("social-media-platform").value,
+        url: document.getElementById("social-media-url").value,
+        icon_class: document.getElementById("social-media-icon").value,
+        display_order:
+          parseInt(document.getElementById("social-media-order").value) || 0,
+      };
+
+      try {
+        const response = await fetch(
+          "http://localhost:3001/api/admin/social-media",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify(socialMediaData),
+          },
+        );
+
+        if (!response.ok) throw new Error("Failed to add social media link");
+
+        closeModal("add-social-media-modal");
+        this.reset();
+        loadSocialMedia();
+        loadDashboardCounts();
+        showSuccess("Social medie-länken har lagts till");
+      } catch (error) {
+        console.error("Error adding social media link:", error);
+        showError("Kunde inte lägga till social medie-länk");
+      }
+    });
+
+  // Edit social media form
+  document
+    .getElementById("edit-social-media-form")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const linkId = document.getElementById("edit-social-media-id").value;
+      const socialMediaData = {
+        platform: document.getElementById("edit-social-media-platform").value,
+        url: document.getElementById("edit-social-media-url").value,
+        icon_class: document.getElementById("edit-social-media-icon").value,
+        display_order:
+          parseInt(document.getElementById("edit-social-media-order").value) ||
+          0,
+        is_active: document.getElementById("edit-social-media-active").checked,
+      };
+
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/admin/social-media/${linkId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify(socialMediaData),
+          },
+        );
+
+        if (!response.ok) throw new Error("Failed to update social media link");
+
+        closeModal("edit-social-media-modal");
+        this.reset();
+        loadSocialMedia();
+        loadDashboardCounts();
+        showSuccess("Social medie-länken har uppdaterats");
+      } catch (error) {
+        console.error("Error updating social media link:", error);
+        showError("Kunde inte uppdatera social medie-länk");
+      }
+    });
+
+  // Add contact info form
+  document
+    .getElementById("add-contact-info-form")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const contactInfoData = {
+        type: document.getElementById("contact-info-type").value,
+        label: document.getElementById("contact-info-label").value,
+        value: document.getElementById("contact-info-value").value,
+        href: document.getElementById("contact-info-href").value || null,
+        display_order:
+          parseInt(document.getElementById("contact-info-order").value) || 0,
+      };
+
+      try {
+        const response = await fetch(
+          "http://localhost:3001/api/admin/contact-info",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify(contactInfoData),
+          },
+        );
+
+        if (!response.ok) throw new Error("Failed to add contact info");
+
+        closeModal("add-contact-info-modal");
+        this.reset();
+        loadContactInfo();
+        loadDashboardCounts();
+        showSuccess("Kontaktinformationen har lagts till");
+      } catch (error) {
+        console.error("Error adding contact info:", error);
+        showError("Kunde inte lägga till kontaktinformation");
+      }
+    });
+
+  // Edit contact info form
+  document
+    .getElementById("edit-contact-info-form")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const contactId = document.getElementById("edit-contact-info-id").value;
+      const contactInfoData = {
+        type: document.getElementById("edit-contact-info-type").value,
+        label: document.getElementById("edit-contact-info-label").value,
+        value: document.getElementById("edit-contact-info-value").value,
+        href: document.getElementById("edit-contact-info-href").value || null,
+        display_order:
+          parseInt(document.getElementById("edit-contact-info-order").value) ||
+          0,
+        is_active: document.getElementById("edit-contact-info-active").checked,
+      };
+
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/admin/contact-info/${contactId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify(contactInfoData),
+          },
+        );
+
+        if (!response.ok) throw new Error("Failed to update contact info");
+
+        closeModal("edit-contact-info-modal");
+        this.reset();
+        loadContactInfo();
+        loadDashboardCounts();
+        showSuccess("Kontaktinformationen har uppdaterats");
+      } catch (error) {
+        console.error("Error updating contact info:", error);
+        showError("Kunde inte uppdatera kontaktinformation");
       }
     });
 }
